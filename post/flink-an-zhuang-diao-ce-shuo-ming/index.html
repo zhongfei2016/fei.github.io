@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>标签列表 | NOTES</title>
+<title>flink安装调测说明 | NOTES</title>
 <meta name="description" content="Life is struggle.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -90,12 +90,50 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="tag-list-title">标签列表</h2>
-          <div class="tags-container">
+          <div class="post-detail">
+            <h2 class="post-title">flink安装调测说明</h2>
+            <div class="post-date">2019-07-28</div>
             
-              <a class="tag" href="https://zhongfei2016.github.io//tag/zaji">杂记</a>
+            <div class="post-content">
+              <h2 id="下载">下载</h2>
+<p>下面是下载地址，从镜像地址下载会比较快，尤其是国内的教育站点：
+https://flink.apache.org/downloads.html</p>
+<h2 id="安装启动">安装启动</h2>
+<p>将tgz包放到Mac/Linux设备目录上，我这里有一个旧笔记本安装的CentOS 6.9，所以就直接放在上面的/home/fei/tools目录下了，解压：
+<img src="https://zhongfei2016.github.io//post-images/1564312326068.bmp" alt="">
+然后直接进到bin目录下执行启动脚本即可：
+<img src="https://zhongfei2016.github.io//post-images/1564312500194.bmp" alt="">
+此时可以直接访问http://192.168.0.107:8081，页面会跳转到flink自带的portal页面，可以看到当前有几个可用的slot以及使用情况。
+<img src="https://zhongfei2016.github.io//post-images/1564312772876.bmp" alt=""></p>
+<h2 id="测试程序">测试程序</h2>
+<p>可以到example目录下执行一下测试程序，执行前首先要起一个服务端端口用来监听数据流，模拟不断输入的数据端，可以使用netcat来起端口：
+nc -l -p 9990
+<img src="https://zhongfei2016.github.io//post-images/1564313207535.bmp" alt="">
+起来后可以使用netstat来查看端口是否有在监听：
+<img src="https://zhongfei2016.github.io//post-images/1564313312764.bmp" alt="">
+如果启动报错：
+<font color=red> lnvalid maximum direct memory size: -XX: MaxDirectMemorySize=8388607T </font>
+<img src="https://zhongfei2016.github.io//post-images/1564297501439.bmp" alt=""></p>
+<p>可以将/home/fei/tools/flink-1.7.2/bin目录下的taskmanager.sh的TM_MAX_OFFHEAP_SIZE改为&quot;1024M&quot;，默认值是&quot;8388607T&quot;，可以注释备份并保存：
+<img src="https://zhongfei2016.github.io//post-images/1564297437920.bmp" alt=""></p>
+
+            </div>
             
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://zhongfei2016.github.io//post/zi-liu-di">
+                  <h3 class="post-title">
+                    自留地
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
           </div>
+
         </div>
       </div>
     </div>
