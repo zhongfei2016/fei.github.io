@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564313345025">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564315737827">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564313345025" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564315737827" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -111,20 +111,29 @@ nc -l -p 9990
 <img src="https://zhongfei2016.github.io//post-images/1564313207535.bmp" alt="">
 起来后可以使用netstat来查看端口是否有在监听：
 <img src="https://zhongfei2016.github.io//post-images/1564313312764.bmp" alt="">
+启动成功后，则可以在flink目录下执行测试程序，接收端口数据并提交任务到flink：
+[fei@fei flink-1.7.2]$ ./bin/flink run examples/streaming/SocketWindowWordCount.jar --hostname 192.168.0.107 --port 9990
+<img src="https://zhongfei2016.github.io//post-images/1564314830987.bmp" alt="">
 如果启动报错：
-<font color=red> lnvalid maximum direct memory size: -XX: MaxDirectMemorySize=8388607T </font>
-<img src="https://zhongfei2016.github.io//post-images/1564297501439.bmp" alt=""></p>
-<p>可以将/home/fei/tools/flink-1.7.2/bin目录下的taskmanager.sh的TM_MAX_OFFHEAP_SIZE改为&quot;1024M&quot;，默认值是&quot;8388607T&quot;，可以注释备份并保存：
-<img src="https://zhongfei2016.github.io//post-images/1564297437920.bmp" alt=""></p>
+<img src="https://zhongfei2016.github.io//post-images/1564314928863.bmp" alt="">
+这里有两种可能，一种是9990端口没有正常起监听，按上面说的netstat检查下，或者wget/telnet方式检查下，看是否有响应，另一种可以看flink的日志，在/home/fei/tools/flink-1.7.2/log目录下，看下flink-*-taskexecutor-*.out日志，此日志中可能有如下报错：
+<img src="https://zhongfei2016.github.io//post-images/1564297501439.bmp" alt="">
+注意这里是说MaxDirectMemorySize无效：<font color=red> lnvalid maximum direct memory size: -XX: MaxDirectMemorySize=8388607T </font></p>
+<p>可以将/home/fei/tools/flink-1.7.2/bin目录下的taskmanager.sh的TM_MAX_OFFHEAP_SIZE改为&quot;1024M&quot;，将默认值&quot;8388607T&quot;注释掉作为备份并保存：
+<img src="https://zhongfei2016.github.io//post-images/1564297437920.bmp" alt="">
+此时再重新启动SocketWindowWordCount.jar这个测试程序，然后在起监听的位置输入不同的字符串：
+<img src="https://zhongfei2016.github.io//post-images/1564315535154.bmp" alt="">
+log目录下的flink-*-taskexecutor-*.out日志就会打印出统计的单词个数：
+<img src="https://zhongfei2016.github.io//post-images/1564315564138.bmp" alt=""></p>
 
             </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://zhongfei2016.github.io//post/zi-liu-di">
+                <a href="https://zhongfei2016.github.io//post/za-ji">
                   <h3 class="post-title">
-                    自留地
+                    杂记
                   </h3>
                 </a>
               </div>
