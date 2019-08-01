@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564587074263">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564674492952">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564587074263" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564674492952" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -105,6 +105,16 @@ https://flink.apache.org/downloads.html</p>
 <img src="https://zhongfei2016.github.io//post-images/1564312500194.bmp" alt="">
 此时可以直接访问http://192.168.0.107:8081，页面会跳转到flink自带的portal页面，可以看到当前有几个可用的slot以及使用情况。
 <img src="https://zhongfei2016.github.io//post-images/1564312772876.bmp" alt=""></p>
+<h2 id="配置说明">配置说明</h2>
+<p>登到flink的web页面中我们可以看到默认有一个taskManager和一个slot，这个配置在conf目录下的flink-conf.yaml文件中指定了每个taskManager上的slot个数：</p>
+<pre><code># The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline.
+
+taskmanager.numberOfTaskSlots: 1
+</code></pre>
+<p>conf下的slaves文件指定了taskManager的个数，一个localhost就代表一个taskManager，多写几行localhost就会起多个taskManager：</p>
+<pre><code>[fei@fei conf]$ cat slaves
+localhost
+</code></pre>
 <h2 id="测试程序">测试程序</h2>
 <p>可以到example目录下执行一下测试程序，执行前首先要起一个服务端端口用来监听数据流，模拟不断输入的数据端，可以使用netcat来起端口：
 nc -l -p 9990
