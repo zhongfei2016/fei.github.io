@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564674492952">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564840943730">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564674492952" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564840943730" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -101,10 +101,23 @@ https://flink.apache.org/downloads.html</p>
 <h2 id="安装启动">安装启动</h2>
 <p>将tgz包放到Mac/Linux设备目录上，我这里有一个旧笔记本安装的CentOS 6.9，所以就直接放在上面的/home/fei/tools目录下了，解压：
 <img src="https://zhongfei2016.github.io//post-images/1564312326068.bmp" alt="">
-然后直接进到bin目录下执行启动脚本即可：
+然后直接进到bin目录下执行启动脚本start-cluster.sh即可：
 <img src="https://zhongfei2016.github.io//post-images/1564312500194.bmp" alt="">
 此时可以直接访问http://192.168.0.107:8081，页面会跳转到flink自带的portal页面，可以看到当前有几个可用的slot以及使用情况。
-<img src="https://zhongfei2016.github.io//post-images/1564312772876.bmp" alt=""></p>
+<img src="https://zhongfei2016.github.io//post-images/1564312772876.bmp" alt="">
+当前只有一个taskManager和一个taskSlot，如果之前启动的start-cluster.sh未停止，又执行了一次start-cluster.sh，会导致taskManager加倍：
+<img src="https://zhongfei2016.github.io//post-images/1564840246907.bmp" alt="">
+但此时jobManager是起不起来的，因为jobManager需要绑定端口，可以看flink-fei-standalonesession-2-fei.log日志：
+<img src="https://zhongfei2016.github.io//post-images/1564840754788.bmp" alt="">
+此时只需要停一下cluster即可，他会按照conf下的slaves配置来停，执行一次只会停一组，并不会都停掉：</p>
+<pre><code>[fei@fei bin]$ ./stop-cluster.sh
+Stopping taskexecutor daemon (pid: 30741) on host fei.
+No standalonesession daemon (pid: 30291) is running anymore on fei.
+[fei@fei bin]$ jps
+5377 StandaloneSessionClusterEntrypoint
+5827 TaskManagerRunner
+31924 Jps
+</code></pre>
 <h2 id="配置说明">配置说明</h2>
 <p>登到flink的web页面中我们可以看到默认有一个taskManager和一个slot，这个配置在conf目录下的flink-conf.yaml文件中指定了每个taskManager上的slot个数：</p>
 <pre><code># The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline.
@@ -135,6 +148,29 @@ nc -l -p 9990
 <img src="https://zhongfei2016.github.io//post-images/1564315535154.bmp" alt="">
 log目录下的flink-*-taskexecutor-*.out日志就会打印出统计的单词个数：
 <img src="https://zhongfei2016.github.io//post-images/1564315564138.bmp" alt=""></p>
+<h2 id="进程查看">进程查看</h2>
+<p>flink常用的进程有两个，一个jobManager，一个taskManager，这里通过WordCount.jar来演示：</p>
+<pre><code>[fei@fei bin]$ ./flink run ../examples/streaming/WordCount.jar --input  test.txt
+Starting execution of program
+Printing result to stdout. Use --output to specify output path.
+Program execution finished
+Job with JobID a0b57877a6564ba0efe8826dca2aff02 has finished.
+Job Runtime: 951 ms
+</code></pre>
+<p>其中--input用来指定输入的文件，这个文件如果开始有空行，会报错：
+<img src="https://zhongfei2016.github.io//post-images/1564839749115.bmp" alt="">
+执行完后我们通过jps命令可以查看所有进程：</p>
+<pre><code>[fei@fei bin]$ jps
+5377 StandaloneSessionClusterEntrypoint
+5827 TaskManagerRunner
+29316 Jps
+</code></pre>
+<p>其中TaskManagerRunner就是taskManager，StandaloneSessionClusterEntrypoint就是jobManager，我们可以通过ps指令查看taskManager的一些参数：</p>
+<pre><code>[fei@fei bin]$ ps -aux | grep 5827
+Warning: bad syntax, perhaps a bogus '-'? See /usr/share/doc/procps-3.2.8/FAQ
+fei       5827  1.2 25.4 1445596 791080 ?      Sl   Jul29  89:18 /usr/java/jdk1.8.0_161/bin/java -XX:+UseG1GC -Xms922M -Xmx922M -XX:MaxDirectMemorySize=1024M -Dlog.file=/home/fei/tools/flink-1.7.2/log/flink-fei-taskexecutor-1-fei.log -Dlog4j.configuration=file:/home/fei/tools/flink-1.7.2/conf/log4j.properties -Dlogback.configurationFile=file:/home/fei/tools/flink-1.7.2/conf/logback.xml -classpath /home/fei/tools/flink-1.7.2/lib/flink-python_2.11-1.7.2.jar:/home/fei/tools/flink-1.7.2/lib/log4j-1.2.17.jar:/home/fei/tools/flink-1.7.2/lib/slf4j-log4j12-1.7.15.jar:/home/fei/tools/flink-1.7.2/lib/flink-dist_2.11-1.7.2.jar::: org.apache.flink.runtime.taskexecutor.TaskManagerRunner --configDir /home/fei/tools/flink-1.7.2/conf
+fei      29569  0.0  0.0   4428   788 pts/1    S+   21:34   0:00 grep 5827
+</code></pre>
 
             </div>
             
