@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564840943730">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1564887478445">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564840943730" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1564887478445" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -117,6 +117,16 @@ No standalonesession daemon (pid: 30291) is running anymore on fei.
 5377 StandaloneSessionClusterEntrypoint
 5827 TaskManagerRunner
 31924 Jps
+</code></pre>
+<p>可以看到，停止时是按照pid来停止的，先停止taskManager【taskexecutor daemon (pid: 30741)】，再停止的jobManager【standalonesession daemon (pid: 30291)】，这些pid实际是在/tmp目录下管理的，可以到/tmp目录下查看：</p>
+<pre><code>[fei@fei tmp]$ cat flink-fei-standalonesession.pid
+8299
+[fei@fei tmp]$ cat flink-fei-taskexecutor.pid
+8763
+</code></pre>
+<p>当执行停止脚本stop-cluster.sh后，上述pid文件就会被删除：</p>
+<pre><code>[fei@fei tmp]$ cat flink-fei-standalonesession.pid
+cat: flink-fei-standalonesession.pid: No such file or directory
 </code></pre>
 <h2 id="配置说明">配置说明</h2>
 <p>登到flink的web页面中我们可以看到默认有一个taskManager和一个slot，这个配置在conf目录下的flink-conf.yaml文件中指定了每个taskManager上的slot个数：</p>
