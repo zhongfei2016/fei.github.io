@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>排序算法总结 | NOTES</title>
+<meta name="description" content="Life is struggle.">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1567933343608">
+<link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://zhongfei2016.github.io/">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1567933343608" class="site-logo">
+        <h1 class="site-title">NOTES</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            分类
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Life is struggle.
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a><b> | </b><a href="https://zhongfei2016.github.io" target="_blank">zhongfei</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">排序算法总结</h2>
+            <div class="post-date">2019-09-08</div>
+            
+            <div class="post-content">
+              <p>排序算法有快速排序、希尔排序、归并排序、插入排序、选择排序、冒泡排序等。</p>
+<h2 id="排序稳定性">排序稳定性：</h2>
+<p>排序前后在序列里两个相等的数在序列中原始的前后位置顺序，在排序后不发生改变，即排序前，ai=aj，且ai在aj之前，则排序后，ai仍在aj之前。</p>
+<h2 id="排序算法说明">排序算法说明</h2>
+<p><strong>选择排序：</strong>
+时间复杂度O(n^2)，需要一个额外交换用空间，空间复杂度O(1)</p>
+<p>但由于当当前元素a1比其后面一个元素b大时，且其后面这个元素b在另一个与当前元素相等的元素a2后面，则a1会和a2交换，此时导致a1和a2顺序颠倒，所以其为不稳定排序。</p>
+<p><strong>冒泡排序：</strong>
+需要n！循环，时间复杂度O(n^2)，需要一个额外交换用空间，空间复杂度O(1)</p>
+<p>只是交换相邻的两个元素，相等的话不会交换，即便两个相等元素不相邻，几次交换后也会相邻且也不会交换，所以是稳定排序。</p>
+<p><strong>插入排序：</strong>
+需要n！循环，时间复杂度O(n^2)，需要一个额外交换用空间，空间复杂度O(1)</p>
+<p>将后面元素插入既定序列中（既定序列起始只有一个值），从既定序列的后面往前比较，遇到比他小或相等的就插到后面，不改变相等元素顺序，所以是稳定排序。</p>
+<p>对于规模比较小且基本有序的序列，效率很高。</p>
+<p><strong>希尔排序：</strong>
+时间复杂度由O(n)到O(n^2)不定，一般是由增量序列决定，空间复杂度与插入类似，为O(1)</p>
+<p>插入排序的一种改良方案，将序列先按增量分组，然后各组进行插入排序，逐渐增大每个分组的元素个数，直到只有一个分组为止，再进行一次插入排序，虽然插入排序本身是稳定的，但是由于跨增量分组进行，每组中相等的元素和同组其他元素比较大小不一定是否调换位置，所以会改变相等元素的相对位置，比如：
+573154，分三组比较时，51一组，75一组，34一组，第一个5和1比较，交换了位置，7和第二个5比较，交换了位置，导致第二个5跑到了第一个5前面，即变为153574，所以不稳定，下面的举例图示比较直观：
+<img src="https://zhongfei2016.github.io//post-images/1567933310768.png" alt=""></p>
+<p><strong>快速排序：</strong>
+时间复杂度：O(nlogn)，空间复杂度：快速排序使用递归，递归使用栈，因此它的空间复杂度为O(logn)</p>
+<p>采用分治的方式，选定中心值，按比中心值小在左，比中心值大在右来分区，然后不断递归即可，即最右侧值a[j]的下标j先从右往左找一个小于中心值的数，再由a[i]的下标i从左往右找一个大于中心值的数，然后交换他们对应的值，如果j和i相遇，则交换中心值和a[i]的值，两边再继续按上述方式比较。</p>
+<p>比如5 3a 6 3b，第一轮j向左找比5小的，即3b，然后i向右找比5大的，即6，交换得到5 3a 3b 6，j继续向左找到3b，i向右遇到j，5和3b交换得到3b 3a 5 6，此时3a，3b顺序打乱，所以不稳定。</p>
+<p><strong>归并排序：</strong></p>
+<p><strong>堆排序：</strong></p>
+<p><strong>基数排序：</strong></p>
+<p>选择排序、快速排序、希尔排序、堆排序不是稳定的排序算法，而冒泡排序、插入排序、归并排序和基数排序是稳定的排序算法</p>
+<p>稳定性总结可以参考：https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html</p>
+<h2 id="各排序方法使用场景">各排序方法使用场景：</h2>
+<p>当应用到已经排序好的或者基本排序好的数组上时，归并排序的时间复杂度最低。</p>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://zhongfei2016.github.io//post/hbase-an-zhuang-ce-shi-ru-shou">
+                  <h3 class="post-title">
+                    HBase安装测试入手
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
