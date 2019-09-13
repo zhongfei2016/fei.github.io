@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1568356145820">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1568360464346">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1568356145820" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1568360464346" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -95,8 +95,15 @@
             <div class="post-date">2019-09-13</div>
             
             <div class="post-content">
-              <p>一个Double类型的list，求取此list中元素值连续大于一个阈值n次（n可以修改）的总次数，比如阈值是4，list中所有元素为：1,5,7,3,4,8,11,1,7,1，要求连续2此超过阈值才计次，那么结果应该是2次，5,7一次，4,8,11一次，7虽然大于4，但由于前后均小于4，所以不计次，代码实现如下：</p>
-<pre><code>public static int calExceedNum(List&lt;Double&gt; list, double threshold, int count)
+              <p>一个Double类型的list，求取此list中元素值连续大于一个阈值n次（n可以修改）的总次数，比如阈值是4，list中所有元素为：1,5,7,3,4,8,11,1,7,1，要求连续2次超过阈值才计次，那么结果应该是2次，5,7一次，4,8,11一次，7虽然大于4，但由于前后均小于4，所以不计次，代码实现如下：</p>
+<pre><code>    /**
+     * 
+     * @param list 要统计的列表
+     * @param threshold 阈值
+     * @param count 要求超阈值连续次数
+     * @return
+     */
+    public static int calExceedNum(List&lt;Double&gt; list, double threshold, int count)
     {
         //符合要求的次数
         int cnt = 0;
