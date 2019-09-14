@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1568427665076">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1568431413177">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1568427665076" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1568431413177" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -114,7 +114,7 @@
 <p>573154，分三组比较时，51一组，75一组，34一组，第一个5和1比较，交换了位置，7和第二个5比较，交换了位置，导致第二个5跑到了第一个5前面，即变为153574，所以不稳定，下面的举例图示比较直观：
 <img src="https://zhongfei2016.github.io//post-images/1567933310768.png" alt=""></p>
 <p><strong>快速排序：</strong>
-时间复杂度：O(nlogn)，空间复杂度：快速排序使用分治方式，并且是递归，因此它的空间复杂度为O(logn)</p>
+时间复杂度：可以理解为每次拆成两组，组数相当于每次×2，拆前为2^0=1组，拆一次为2^1=2组，假设x次后比较完所有n个元素，就是拆到最后每组一个元素，共n组，2^x=n，那x=log(2)(n)，且每次要比n个元素，那就是nlog(2)(n)，即O(nlogn)，空间复杂度：快速排序使用分治方式，每次拆两组，每组都需要一个额外空间放中心值，即2^x=n，x=log(2)(n)，因此它的空间复杂度为O(logn)</p>
 <p>采用分治的方式，选定中心值（英文为pivot，需要理解的是中心值并不在中心位置），无序度大的数组一般取第一个值，无序度小的数组一般取随机值，然后进行分组，分组分左右两边进行，右指针右起找比中心值小的数或者直到遇到左指针，把其指向的数赋给左指针（如果直到遇到左指针都没有找到比中心值小的数，相当于把左指针指向的数赋给左指针，左指针操作与此类似），左指针左起找比中心值大的数或者直到遇到右指针，把其指向的数赋给右指针，最后把中心值赋给左右指针相遇的位置，此位置其实是本轮排序的中心位置，之后拆为左右部分继续按此排序，直到只有一个元素为止，也有一种方式为，最右侧值a[j]的下标j先从右往左找一个小于中心值的数，与当前a[i]交换，再由a[i]的下标i从左往右找一个大于中心值的数，与当前a[j]交换他们对应的值，直到j和i相遇，则交换中心值和a[i]的值，本轮结束后再按中心值拆成两边再继续按上述方式比较直到比较的两边只有一个元素为止。</p>
 <p>对于稳定性，比如5 3a 6 3b，第一轮j向左找比5小的，即3b，然后i向右找比5大的，即6，交换得到5 3a 3b 6，j继续向左找到3b，i向右遇到j，5和3b交换得到3b 3a 5 6，此时3a，3b顺序打乱，所以不稳定。</p>
 <p>参考：https://www.jianshu.com/p/5f38dd54b11f</p>
