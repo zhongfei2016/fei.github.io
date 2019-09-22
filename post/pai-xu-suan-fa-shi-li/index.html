@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1569149604323">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1569167265053">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1569149604323" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1569167265053" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -312,6 +312,65 @@ public class SortDemo
                     }
                 }
             }
+        }
+    }
+		
+    /**
+     * 归并排序
+     *
+     * @param arr
+     * @param left
+     * @param right
+     */
+    private static void mergeSort(int[] arr, int left, int right)
+    {
+        if (left == right)
+        {
+            return;
+        }
+        int middle = left + ((right - left) &gt;&gt; 1);
+        mergeSort(arr, left, middle);
+        mergeSort(arr, middle + 1, right);
+        merge(arr, left, middle, right);
+    }
+
+    /**
+     * 归并排序归并左右组方法
+     *
+     * @param arr
+     * @param left
+     * * @param middle
+     * @param right
+     */
+    private static void merge(int[] arr, int left, int middle, int right)
+    {
+        int[] temp = new int[right - left + 1];
+        //往temp存所需的索引
+        int idx = 0;
+        //以middle为分界点，左边组的起点
+        int pLeft = left;
+        //右边组的起点
+        int pRight = middle + 1;
+        //左右两边都小于其终点时比较对应值
+        //左右两列都从一个元素开始，天然有序，所以对应位比较,小的放到temp数组里
+        while (pLeft &lt;= middle &amp;&amp; pRight &lt;= right)
+        {
+            temp[idx++] = arr[pLeft] &lt; arr[pRight] ? arr[pLeft++] : arr[pRight++];
+        }
+        //左组有剩余则追加到temp数组
+        while (pLeft &lt;= middle)
+        {
+            temp[idx++] = arr[pLeft++];
+        }
+        //右组有剩余则追加到temp数组
+        while (pRight &lt;= right)
+        {
+            temp[idx++] = arr[pRight++];
+        }
+        //最后放回到原数组
+        for (int i = 0; i &lt; idx; i++)
+        {
+            arr[left++] = temp[i];
         }
     }
 
