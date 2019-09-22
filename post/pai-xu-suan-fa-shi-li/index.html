@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>排序算法示例 | NOTES</title>
+<meta name="description" content="Life is struggle.">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1569144292615">
+<link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://zhongfei2016.github.io/">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1569144292615" class="site-logo">
+        <h1 class="site-title">NOTES</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            分类
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      Life is struggle.
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a><b> | </b><a href="https://zhongfei2016.github.io" target="_blank">zhongfei</a>
+    </div>
+  </div>
+</div>
+
+
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">排序算法示例</h2>
+            <div class="post-date">2019-09-22</div>
+            
+            <div class="post-content">
+              <pre><code>import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class SortDemo
+{
+    public static final void main(String[] args)
+    {
+        int[] arrForSort = new int[]{3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48};
+//        radixSort(arrForRadixSort, 100);
+//        quickSort(arrForRadixSort, 0, 14);
+//        selectSort(arrForRadixSort);
+//        bubbleSort(arrForSort);
+//        insertSort(arrForSort);
+        shellSort(arrForSort);
+        System.out.println(Arrays.toString(arrForSort));
+
+    }
+
+    /**
+     * 基数排序
+     *
+     * @param array
+     * @param d     基数值，比如10,100……
+     */
+    private static void radixSort(int[] array, int d)
+    {
+        int n = 1;//代表位数对应的数：1,10,100...
+        int k = 0;//保存每一位排序后的结果用于下一位的排序输入
+        int length = array.length;
+        int[][] bucket = new int[10][length];//排序桶用于保存每次排序后的结果，这一位上排序结果相同的数字放在同一个桶里
+        int[] order = new int[length];//用于保存每个桶里有多少个数字
+        while (n &lt; d)
+        {
+            for (int num : array) //将数组array里的每个数字放在相应的桶里
+            {
+                int digit = (num / n) % 10;
+                bucket[digit][order[digit]] = num;
+                order[digit]++;
+            }
+            for (int i = 0; i &lt; length; i++)//将前一个循环生成的桶里的数据覆盖到原数组中用于保存这一位的排序结果
+            {
+                if (order[i] != 0)//这个桶里有数据，从上到下遍历这个桶并将数据保存到原数组中
+                {
+                    for (int j = 0; j &lt; order[i]; j++)
+                    {
+                        array[k] = bucket[i][j];
+                        k++;
+                    }
+                }
+                order[i] = 0;//将桶里计数器置0，用于下一次位排序
+            }
+            n *= 10;
+            k = 0;//将k置0，用于下一轮保存位排序结果
+        }
+    }
+
+    /**
+     * 快速排序
+     *
+     * @param arr
+     * @param left
+     * @param right
+     */
+    private static void quickSort(int[] arr, int left, int right)
+    {
+        if (left &lt; right)
+        {
+						//先拆分找基准并将所有值中大的置于基准值右侧，小的置于基准值左侧
+            int base = divideForQuickSort(arr, left, right);
+						//然后最有两边分别快排，递归到每组只有一个值天然有序为止
+            quickSort(arr, left, base - 1);
+            quickSort(arr, base + 1, right);
+        }
+
+    }
+		
+		/**
+     * 快速获取基准值方法
+     *
+     * @param arr
+     * @param left
+     * @param right
+     */
+    private static int divideForQuickSort(int[] arr, int left, int right)
+    {
+		    //获取基准值，一般取左值，即第一个
+        int base = arr[left];
+        while (left &lt; right)
+        {
+						//右指针往左走找比基准值小的值
+            while (left &lt; right &amp;&amp; arr[right] &gt;= base)
+            {
+                right--;
+            }
+						//直到找到比基准值小的值或者到达左指针，然后赋给左指针当前指向的位置
+            arr[left] = arr[right];
+						//左指针往右走找比基准值大的值
+            while (left &lt; right &amp;&amp; arr[left] &lt;= base)
+            {
+                left++;
+            }
+						//直到找到比基准值大的值或者到达右指针，然后赋给右指针当前指向的位置
+            arr[right] = arr[left];
+        }
+				//最后把基准值赋到左指针指向的当前位置，并返回新的基准位置
+				//后面要以此位置拆分为两段分别比较
+        arr[left] = base;
+        return left;
+    }
+
+    /**
+     * 选择排序
+     *
+     * @param arr
+     */
+    private static void selectSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+				//从前面取第一个值跟后面所有值比较，比后面值大就交换位置，依次类推
+        for (int i = 0; i &lt; arr.length - 1; i++)
+        {
+            for (int j = i + 1; j &lt; arr.length; j++)
+            {
+                if (arr[i] &gt; arr[j])
+                {
+                    swap(arr, i, j);
+                }
+            }
+        }
+    }
+
+    /**
+     * 冒泡排序
+     *
+     * @param arr
+     */
+    private static void bubbleSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+				for (int i = arr.length - 1; i &gt; 0; i--)
+        {
+						//两两相邻比较，比后面的大就交换，一轮下来将最大值沉到最后
+            for (int j = 0; j &lt; i; j++)
+            {
+                if (arr[j] &gt; arr[j + 1])
+                {
+                    swap(arr, j, j + 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * 插入排序
+     *
+     * @param arr
+     */
+    private static void insertSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+				//第一个天然有序不比较，跳过，所以i从1开始
+				for (int i = 1; i &lt; arr.length; i++)
+        {
+            //从当前i位置往前比较，后面比前面小就交换，否则结束比较
+						//只比较相邻值，因为前面序列默认已有序，从后往前找到比当前值大的就交换，直到比当前小就可以停止
+						for (int j = i; j &gt;= 1; j--)
+            {
+                if (arr[j] &lt; arr[j - 1])
+                {
+                    swap(arr, j, j - 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * 希尔排序
+     * 
+     * @param arr
+     */
+    private static void shellSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+				//计算跨增量的值
+				int gap = arr.length;
+        List&lt;Integer&gt; gapList = new ArrayList&lt;Integer&gt;();
+        while ((gap = gap / 2) &gt;= 1)
+        {
+            gapList.add(gap);
+        }
+
+        for (int gapItem : gapList)
+        {
+            //插入排序，只不过是跨增量插入排序
+						for (int i = 1 + gapItem; i &lt; arr.length; i++)
+            {
+                for (int j = i; j &gt;= 1 &amp;&amp; j - gapItem&gt;=0; j -= gapItem)
+                {
+                    if (arr[j] &lt; arr[j - gapItem])
+                    {
+                        swap(arr, j, j - gapItem);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void swap(int[] arr, int i, int j)
+    {
+        int tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
+
+</code></pre>
+
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://zhongfei2016.github.io//post/tong-ji-list-zhong-lian-xu-chao-yu-zhi-n-ci-de-ci-shu">
+                  <h3 class="post-title">
+                    统计list中连续超阈值n次的次数
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>
