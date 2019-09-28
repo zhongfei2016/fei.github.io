@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>杂记 | NOTES</title>
+<title>java数据类型及字长说明 | NOTES</title>
 <meta name="description" content="Life is struggle.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -91,25 +91,40 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">杂记</h2>
-            <div class="post-date">2015-08-24</div>
+            <h2 class="post-title">java数据类型及字长说明</h2>
+            <div class="post-date">2019-09-28</div>
             
             <div class="post-content">
-              <p>人吧，大概都会因为善良而俊俏，因为宽容而优雅，因为认真而可爱，因为妖娆而轻佻，因为愤怒而衰老，因为嫉妒而丑陋。</p>
-<p>决定人好坏的，从来都是下限而不是上限，即便在外面表现的多么知书达理、温暖纯良，也抵不过遇事就性情乖张、牢骚满腹那副嘴脸给人心里带来的阴影，这样的人根本无法承受一点压力，像纸叠的架子，水一泡就成了一滩碎屑，生活根本也无力继续，只能一直在原地修修补补。</p>
-<p>一个人很难本着一以贯之的原则做事情，这也是人需要谦卑克制的原因，否则只会拿出一个宽以律己、严以待人的形象，恶心别人，还自取其辱。</p>
-<p>如果拿世俗的眼光来看，被很多人推崇的儒家也是俗不可耐的，“大德必得其禄，必得其位，必得其寿”这种充满了铜臭、权欲和永生奢望的思想，一直都在统治中国社会几千年的思想里，潜滋暗长。</p>
+              <p>在JAVA中一共有八种基本数据类型，他们分别是 ：<br>
+byte<br>
+short<br>
+int<br>
+long<br>
+float<br>
+double<br>
+char<br>
+boolean</p>
+<p>其中byte、short、int、long都是表示整数的，只不过他们的取值范围不一样 ：<br>
+<strong>byte</strong>的取值范围为-128~127，占用1个字节（-2的7次方到2的7次方-1）<br>
+<strong>short</strong>的取值范围为-32768~32767，占用2个字节（-2的15次方到2的15次方-1）<br>
+<strong>int</strong>的取值范围为（-2147483648~2147483647），占用4个字节（-2的31次方到2的31次方-1）<br>
+<strong>long</strong>的取值范围为（-9223372036854774808~9223372036854774807），占用8个字节（-2的63次方到2的63次方-1）<br>
+<strong>float</strong>占四个字节；double占八个字节；<br>
+<strong>boolean</strong>只有true和false，占用的空间官方并没有给出准确的说法，需要看实际虚拟机的实现，《Java虚拟机规范》给出了单个boolean定义时虚拟机会编译成4个字节的int型，而boolean数组会编译为1个byte的说法，可参考：https://www.jianshu.com/p/2f663dc820d0<br>
+<strong>char</strong>占两个字节，其中其前128位与ASCII码兼容。<br>
+参考：https://www.cnblogs.com/singlesoar/p/5688915.html</p>
 
             </div>
             
-              <div class="tag-container">
-                
-                  <a href="https://zhongfei2016.github.io//tag/zaji" class="tag">
-                    杂记
-                  </a>
-                
-              </div>
             
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://zhongfei2016.github.io//post/pai-xu-suan-fa-shi-li">
+                  <h3 class="post-title">
+                    排序算法示例
+                  </h3>
+                </a>
+              </div>
             
 
             

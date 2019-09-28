@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1569167265053">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1569639171474">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1569167265053" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1569639171474" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -115,9 +115,9 @@ Saving to: “hbase-1.4.10-bin.tar.gz”
 [fei@fei tools]$ 
 </code></pre>
 <h2 id="配置测试">配置测试</h2>
-<p>下载完成后解压tar包并修改conf目录下的hbase-site.xml文件，配置一个目录地址，后续HBase会将数据写到配置的目录下：
-<img src="https://zhongfei2016.github.io//post-images/1564584506535.bmp" alt="">
-而且因为默认的hbase.rootdir 是指向 /tmp/hbase-${user.name}，服务器重启后数据就会丢失，所以此处最好修改一下。
+<p>下载完成后解压tar包并修改conf目录下的hbase-site.xml文件，配置一个目录地址，后续HBase会将数据写到配置的目录下：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564584506535.bmp" alt=""><br>
+而且因为默认的hbase.rootdir 是指向 /tmp/hbase-${user.name}，服务器重启后数据就会丢失，所以此处最好修改一下。<br>
 启动HBase：</p>
 <pre><code>[fei@fei bin]$ ./start-hbase.sh
 running master, logging to /home/fei/tools/hbase-1.4.10/bin/../logs/hbase-fei-master-fei.out
@@ -125,8 +125,8 @@ Java HotSpot(TM) Server VM warning: ignoring option PermSize=128m; support was r
 Java HotSpot(TM) Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0
 [fei@fei bin]$ 
 </code></pre>
-<p>此处报的warning是HBase默认的环境配置导致，可以到conf/hbase-env.sh文件中看下如下配置：
-<img src="https://zhongfei2016.github.io//post-images/1564584711975.bmp" alt="">
+<p>此处报的warning是HBase默认的环境配置导致，可以到conf/hbase-env.sh文件中看下如下配置：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564584711975.bmp" alt=""><br>
 这两个环境变量只是为JDK7准备的，JDK8+完全可以去掉，所以此处可以注释到这两个环境变量，然后重新启动HBase即可，此时再启动就不会报warning了：</p>
 <pre><code>[fei@fei bin]$ ./stop-hbase.sh
 stopping hbase....................

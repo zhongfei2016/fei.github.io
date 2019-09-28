@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://zhongfei2016.github.io/</id>
+    <title>NOTES</title>
+    <updated>2019-09-28T04:51:47.168Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://zhongfei2016.github.io/"/>
+    <link rel="self" href="https://zhongfei2016.github.io//atom.xml"/>
+    <subtitle>Life is struggle.</subtitle>
+    <logo>https://zhongfei2016.github.io//images/avatar.png</logo>
+    <icon>https://zhongfei2016.github.io//favicon.ico</icon>
+    <rights>All rights reserved 2019, NOTES</rights>
+    <entry>
+        <title type="html"><![CDATA[java数据类型及字长说明]]></title>
+        <id>https://zhongfei2016.github.io//post/java-shu-ju-lei-xing-ji-zi-chang-shuo-ming</id>
+        <link href="https://zhongfei2016.github.io//post/java-shu-ju-lei-xing-ji-zi-chang-shuo-ming">
+        </link>
+        <updated>2019-09-28T02:49:30.000Z</updated>
+        <content type="html"><![CDATA[<p>在JAVA中一共有八种基本数据类型，他们分别是 ：<br>
+byte<br>
+short<br>
+int<br>
+long<br>
+float<br>
+double<br>
+char<br>
+boolean</p>
+<p>其中byte、short、int、long都是表示整数的，只不过他们的取值范围不一样 ：<br>
+<strong>byte</strong>的取值范围为-128~127，占用1个字节（-2的7次方到2的7次方-1）<br>
+<strong>short</strong>的取值范围为-32768~32767，占用2个字节（-2的15次方到2的15次方-1）<br>
+<strong>int</strong>的取值范围为（-2147483648~2147483647），占用4个字节（-2的31次方到2的31次方-1）<br>
+<strong>long</strong>的取值范围为（-9223372036854774808~9223372036854774807），占用8个字节（-2的63次方到2的63次方-1）<br>
+<strong>float</strong>占四个字节；double占八个字节；<br>
+<strong>boolean</strong>只有true和false，占用的空间官方并没有给出准确的说法，需要看实际虚拟机的实现，《Java虚拟机规范》给出了单个boolean定义时虚拟机会编译成4个字节的int型，而boolean数组会编译为1个byte的说法，可参考：https://www.jianshu.com/p/2f663dc820d0<br>
+<strong>char</strong>占两个字节，其中其前128位与ASCII码兼容。<br>
+参考：https://www.cnblogs.com/singlesoar/p/5688915.html</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[排序算法示例]]></title>
+        <id>https://zhongfei2016.github.io//post/pai-xu-suan-fa-shi-li</id>
+        <link href="https://zhongfei2016.github.io//post/pai-xu-suan-fa-shi-li">
+        </link>
+        <updated>2019-09-22T08:58:39.000Z</updated>
+        <content type="html"><![CDATA[<pre><code>import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public class SortDemo
+{
+    public static final void main(String[] args)
+    {
+        int[] arrForSort = new int[]{3, 44, 38, 5, 47, 15, 36, 26, 27, 2, 46, 4, 19, 50, 48};
+//        radixSort(arrForRadixSort, 100);
+//        quickSort(arrForRadixSort, 0, 14);
+//        selectSort(arrForRadixSort);
+//        bubbleSort(arrForSort);
+//        insertSort(arrForSort);
+        shellSort(arrForSort);
+        System.out.println(Arrays.toString(arrForSort));
+
+    }
+
+    /**
+     * 基数排序
+     *
+     * @param array
+     * @param d     基数值，比如10,100……
+     */
+    private static void radixSort(int[] array, int d)
+    {
+        int n = 1;//代表位数对应的数：1,10,100...
+        int k = 0;//保存每一位排序后的结果用于下一位的排序输入
+        int length = array.length;
+        int[][] bucket = new int[10][length];//排序桶用于保存每次排序后的结果，这一位上排序结果相同的数字放在同一个桶里
+        int[] order = new int[length];//用于保存每个桶里有多少个数字
+        while (n &lt; d)
+        {
+            for (int num : array) //将数组array里的每个数字放在相应的桶里
+            {
+                int digit = (num / n) % 10;
+                bucket[digit][order[digit]] = num;
+                order[digit]++;
+            }
+            for (int i = 0; i &lt; length; i++)//将前一个循环生成的桶里的数据覆盖到原数组中用于保存这一位的排序结果
+            {
+                if (order[i] != 0)//这个桶里有数据，从上到下遍历这个桶并将数据保存到原数组中
+                {
+                    for (int j = 0; j &lt; order[i]; j++)
+                    {
+                        array[k] = bucket[i][j];
+                        k++;
+                    }
+                }
+                order[i] = 0;//将桶里计数器置0，用于下一次位排序
+            }
+            n *= 10;
+            k = 0;//将k置0，用于下一轮保存位排序结果
+        }
+    }
+
+    /**
+     * 快速排序
+     *
+     * @param arr
+     * @param left
+     * @param right
+     */
+    private static void quickSort(int[] arr, int left, int right)
+    {
+        if (left &lt; right)
+        {
+            //先拆分找基准并将所有值中大的置于基准值右侧，小的置于基准值左侧
+            int base = divideForQuickSort(arr, left, right);
+            //然后最有两边分别快排，递归到每组只有一个值天然有序为止
+            quickSort(arr, left, base - 1);
+            quickSort(arr, base + 1, right);
+        }
+
+    }
+		
+		/**
+     * 快速获取基准值方法
+     *
+     * @param arr
+     * @param left
+     * @param right
+     */
+    private static int divideForQuickSort(int[] arr, int left, int right)
+    {
+        //获取基准值，一般取左值，即第一个
+        int base = arr[left];
+        while (left &lt; right)
+        {
+            //右指针往左走找比基准值小的值
+            while (left &lt; right &amp;&amp; arr[right] &gt;= base)
+            {
+                right--;
+            }
+            //直到找到比基准值小的值或者到达左指针，然后赋给左指针当前指向的位置
+            arr[left] = arr[right];
+            //左指针往右走找比基准值大的值
+            while (left &lt; right &amp;&amp; arr[left] &lt;= base)
+            {
+                left++;
+            }
+            //直到找到比基准值大的值或者到达右指针，然后赋给右指针当前指向的位置
+            arr[right] = arr[left];
+        }
+        //最后把基准值赋到左指针指向的当前位置，并返回新的基准位置
+        //后面要以此位置拆分为两段分别比较
+        arr[left] = base;
+        return left;
+    }
+
+    /**
+     * 选择排序
+     *
+     * @param arr
+     */
+    private static void selectSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+        //从前面取第一个值跟后面所有值比较，比后面值大就交换位置，依次类推
+        for (int i = 0; i &lt; arr.length - 1; i++)
+        {
+            for (int j = i + 1; j &lt; arr.length; j++)
+            {
+                if (arr[i] &gt; arr[j])
+                {
+                    swap(arr, i, j);
+                }
+            }
+        }
+    }
+
+    /**
+     * 冒泡排序
+     *
+     * @param arr
+     */
+    private static void bubbleSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+        for (int i = arr.length - 1; i &gt; 0; i--)
+        {
+            //两两相邻比较，比后面的大就交换，一轮下来将最大值沉到最后
+            for (int j = 0; j &lt; i; j++)
+            {
+                if (arr[j] &gt; arr[j + 1])
+                {
+                    swap(arr, j, j + 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * 插入排序
+     *
+     * @param arr
+     */
+    private static void insertSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+        //第一个天然有序不比较，跳过，所以i从1开始
+        for (int i = 1; i &lt; arr.length; i++)
+        {
+            //从当前i位置往前比较，后面比前面小就交换，否则结束比较
+            //只比较相邻值，因为前面序列默认已有序，从后往前找到比当前值大的就交换，直到比当前小就可以停止
+            for (int j = i; j &gt;= 1; j--)
+            {
+                if (arr[j] &lt; arr[j - 1])
+                {
+                    swap(arr, j, j - 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * 希尔排序
+     *
+     * @param arr
+     */
+    private static void shellSort(int[] arr)
+    {
+        if (arr == null || arr.length &lt;= 1)
+        {
+            return;
+        }
+        //计算跨增量的值
+        int gap = arr.length;
+        List&lt;Integer&gt; gapList = new ArrayList&lt;Integer&gt;();
+        while ((gap = gap / 2) &gt;= 1)
+        {
+            gapList.add(gap);
+        }
+
+        for (int gapItem : gapList)
+        {
+            //插入排序，只不过是跨增量插入排序
+            for (int i = 1 + gapItem; i &lt; arr.length; i++)
+            {
+                for (int j = i; j &gt;= 1 &amp;&amp; j - gapItem &gt;= 0; j -= gapItem)
+                {
+                    if (arr[j] &lt; arr[j - gapItem])
+                    {
+                        swap(arr, j, j - gapItem);
+                    }
+                }
+            }
+        }
+    }
+		
+    /**
+     * 归并排序
+     *
+     * @param arr
+     * @param left
+     * @param right
+     */
+    private static void mergeSort(int[] arr, int left, int right)
+    {
+        if (left == right)
+        {
+            return;
+        }
+        int middle = left + ((right - left) &gt;&gt; 1);
+        mergeSort(arr, left, middle);
+        mergeSort(arr, middle + 1, right);
+        merge(arr, left, middle, right);
+    }
+
+    /**
+     * 归并排序归并左右组方法
+     *
+     * @param arr
+     * @param left
+     * * @param middle
+     * @param right
+     */
+    private static void merge(int[] arr, int left, int middle, int right)
+    {
+        int[] temp = new int[right - left + 1];
+        //往temp存所需的索引
+        int idx = 0;
+        //以middle为分界点，左边组的起点
+        int pLeft = left;
+        //右边组的起点
+        int pRight = middle + 1;
+        //左右两边都小于其终点时比较对应值
+        //左右两列都从一个元素开始，天然有序，所以对应位比较,小的放到temp数组里
+        while (pLeft &lt;= middle &amp;&amp; pRight &lt;= right)
+        {
+            temp[idx++] = arr[pLeft] &lt; arr[pRight] ? arr[pLeft++] : arr[pRight++];
+        }
+        //左组有剩余则追加到temp数组
+        while (pLeft &lt;= middle)
+        {
+            temp[idx++] = arr[pLeft++];
+        }
+        //右组有剩余则追加到temp数组
+        while (pRight &lt;= right)
+        {
+            temp[idx++] = arr[pRight++];
+        }
+        //最后放回到原数组
+        for (int i = 0; i &lt; idx; i++)
+        {
+            arr[left++] = temp[i];
+        }
+    }
+
+    private static void swap(int[] arr, int i, int j)
+    {
+        int tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
+
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[统计list中连续超阈值n次的次数]]></title>
+        <id>https://zhongfei2016.github.io//post/tong-ji-list-zhong-lian-xu-chao-yu-zhi-n-ci-de-ci-shu</id>
+        <link href="https://zhongfei2016.github.io//post/tong-ji-list-zhong-lian-xu-chao-yu-zhi-n-ci-de-ci-shu">
+        </link>
+        <updated>2019-09-13T06:18:41.000Z</updated>
+        <content type="html"><![CDATA[<p>一个Double类型的list，求取此list中元素值连续大于一个阈值n次（n可以修改）的总次数，比如阈值是4，list中所有元素为：1,5,7,3,4,8,11,1,7,1，要求连续2次超过阈值才计次，那么结果应该是2次，5,7一次，4,8,11一次，7虽然大于4，但由于前后均小于4，所以不计次，代码实现如下：</p>
+<pre><code>    /**
+     * 
+     * @param list 要统计的列表
+     * @param threshold 阈值
+     * @param count 要求超阈值连续次数
+     * @return
+     */
+    public static int calExceedNum(List&lt;Double&gt; list, double threshold, int count)
+    {
+        //符合要求的次数
+        int cnt = 0;
+        //单次连续超阈值的次数
+        int continueCnt = 0;
+        for (int i = 0; i &lt; list.size(); i++)
+        {
+            if (list.get(i) &lt; threshold)
+            {
+                continueCnt = 0;
+                continue;
+            }
+            else
+            {
+                continueCnt++;
+            }
+            if(continueCnt==count)
+            {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[排序算法总结]]></title>
+        <id>https://zhongfei2016.github.io//post/pai-xu-suan-fa-zong-jie</id>
+        <link href="https://zhongfei2016.github.io//post/pai-xu-suan-fa-zong-jie">
+        </link>
+        <updated>2019-09-08T08:53:58.000Z</updated>
+        <content type="html"><![CDATA[<p>排序方法有快速排序、希尔排序、归并排序、插入排序、选择排序、冒泡排序等。</p>
+<h2 id="排序稳定性"><strong>排序稳定性</strong></h2>
+<p>排序前后在序列里两个相等的数在序列中原始的前后位置顺序，在排序后不发生改变，即排序前，ai=aj，且ai在aj之前，则排序后，ai仍在aj之前。</p>
+<p><strong>选择排序</strong>：<br>
+时间复杂度O(n^2)，需要一个额外交换用空间，空间复杂度O(1)</p>
+<p>从第一个开始，拿第一个和后面的每一个元素比较，第一个比后面的大就交换两者，一直比到最后一个元素，这样第一轮就找到了最小值，第二轮从第二个元素开始，以此类推。有这样的序列：a1，a2，b，当前元素a1比其后面一个元素b大，且其后面这个元素b在另一个与当前元素a1相等的元素a2后面，如果a1比b大，则a1会和b交换，原来a1在a2前面，a1和b交换后变为b，a2，a1，a1和a2顺序颠倒，所以其为不稳定排序。</p>
+<p><strong>冒泡排序</strong>：<br>
+需要n*(n+1)/2个循环，时间复杂度O(n^2)，需要一个额外交换用空间，空间复杂度O(1)</p>
+<p>从第一个元素开始，只跟后一个元素比较，如果前一个比后一个大则两者交换，那一轮过后最大的沉到最后面，第二轮再前n-1个元素比较，找出倒数第二大的元素，以此类推，由于只是交换相邻的两个元素，相等的话不会交换，即便两个相等元素不相邻，几次交换后也会相邻且也不会交换，所以是稳定排序。</p>
+<p><strong>插入排序</strong>：<br>
+需要n*(n+1)/2个循环，时间复杂度O(n^2)，需要一个额外交换用空间，空间复杂度O(1)</p>
+<p>将后面元素插入既定序列中（既定序列起始只有一个值），将既定序列后面拿出的待插入元素从既定序列的最后一个元素往前比较，遇到比他小或相等的就插到其后面，比如原始数组为1，5，4，8，3，2，其中开始认定1为既定序列，由于只有一个值所以天然有序，然后拿5跟1比较，由于比1大，所以不动，此时既定序列变为1，5，仍有序，然后拿4与当前既定序列比较，先跟5比，比5小，再跟1比，4遇到比他小的1要插到1后面，既定序列变为1，4，5，以此类推，此方式不改变相等元素顺序，所以是稳定排序。</p>
+<p>对于规模比较小且基本有序的序列，效率很高。</p>
+<p><strong>希尔排序</strong>：<br>
+时间复杂度由O(n)到O(n^2)不定，一般是由增量序列决定，空间复杂度与插入类似，为O(1)</p>
+<p>插入排序的一种改良方案，将序列先按增量分组，然后各组进行插入排序，逐渐增大每个分组的元素个数，直到只有一个分组为止，再进行一次插入排序，虽然插入排序本身是稳定的，但是由于跨增量分组进行，每组中相等的元素和同组其他元素比较大小不一定是否调换位置，所以会改变相等元素的相对位置，比如：</p>
+<p>573154，分三组比较时，51一组，75一组，34一组，第一个5和1比较，交换了位置，7和第二个5比较，交换了位置，导致第二个5跑到了第一个5前面，即变为153574，所以不稳定，下面的举例图示比较直观：<br>
+<img src="https://zhongfei2016.github.io//post-images/1567933310768.png" alt=""></p>
+<p><strong>快速排序：</strong><br>
+时间复杂度：可以理解为每次拆成两组，组数相当于每次×2，拆前为2<sup>0=1组，拆一次为2</sup>1=2组，假设x次后比较完所有n个元素，就是拆到最后每组一个元素，共n组，2<sup>x=n，那x=log(2)(n)，且每次要比n个元素，那就是nlog(2)(n)，即O(nlogn)，空间复杂度：快速排序使用分治方式，每次拆两组，每组都需要一个额外空间放中心值，即2</sup>x=n，x=log(2)(n)，因此它的空间复杂度为O(logn)</p>
+<p>采用分治的方式，选定中心值（英文为pivot，需要理解的是中心值并不在中心位置），无序度大的数组一般取第一个值，无序度小的数组一般取随机值，然后进行分组，分组分左右两边进行，右指针右起找比中心值小的数或者直到遇到左指针，把其指向的数赋给左指针（如果直到遇到左指针都没有找到比中心值小的数，相当于把左指针指向的数赋给左指针，左指针操作与此类似），左指针左起找比中心值大的数或者直到遇到右指针，把其指向的数赋给右指针，最后把中心值赋给左右指针相遇的位置，此位置其实是本轮排序的中心位置，之后拆为左右部分继续按此排序，直到只有一个元素为止，也有一种方式为，最右侧值a[j]的下标j先从右往左找一个小于中心值的数，与当前a[i]交换，再由a[i]的下标i从左往右找一个大于中心值的数，与当前a[j]交换他们对应的值，直到j和i相遇，则交换中心值和a[i]的值，本轮结束后再按中心值拆成两边再继续按上述方式比较直到比较的两边只有一个元素为止。</p>
+<p>对于稳定性，比如5 3a 6 3b，第一轮j向左找比5小的，即3b，然后i向右找比5大的，即6，交换得到5 3a 3b 6，j继续向左找到3b，i向右遇到j，5和3b交换得到3b 3a 5 6，此时3a，3b顺序打乱，所以不稳定。</p>
+<p>参考：https://www.jianshu.com/p/5f38dd54b11f</p>
+<p><strong>归并排序：</strong><br>
+分治方式，时间复杂度O(nlogn)，需要一个与原数组同等大小的临时空间存放有序数组，空间复杂度O(n)</p>
+<p>采用递归分治的方式，将原数组不断从中间拆成2组，直到拆成每组只有一个，即为天然有序，合并时，两组分别从头开始取元素比较，较小的值放到临时数组里，临时数组大小与两组待比较数组大小之和相等，比较完总有一组先比完，有剩余的一组的所有剩余值直接追加到临时数组的后面，当前两组就排序完了，然后再递归上去直到结束，由于在合并过程中只要保证相等的情况下前面序列的元素放在前面，整个迭代过程中就不会打乱相同值的顺序，所以是稳定的。</p>
+<p>参考：https://www.jianshu.com/p/95c69f8e47e7</p>
+<p><strong>堆排序：</strong><br>
+分治方式，时间复杂度O(nlogn)，排序虽然递归，但只是用了额外一个元素空间用于交换，空间复杂度为O(1)</p>
+<p>第一个元素作为根节点，如果根节点的索引是i，则其左右节点的索引为2<em>i+1和2</em>i+2，比如根节点索引为0，则其左右节点索引分别为1和2，从第一个节点开始，只要他比父节点大，就跟父节点交换，直到没有父节点或者父节点最大为止，这是一个递归过程，由于每次都是左右两个节点在比较，所以可能出现调换，比如4，5，3，3，1，7，2这个数组，5的子节点是第二个3和1，第一个3的子节点是7和2，5和第二个3和1比较都不换位置，但是第一个3和7比较会交换位置，导致两个3位置颠倒，所以是不稳定排序。<br>
+<img src="https://zhongfei2016.github.io//post-images/1568427588848.png" alt=""><br>
+参考：https://www.jianshu.com/p/3e1d4ed98565</p>
+<p><strong>基数排序：</strong><br>
+时间复杂度O(nk)，k为元素最大位数，是常数，空间复杂度维n+t，t是存放按当前位排序的临时数组，也是常数。</p>
+<p>按照每个元素的个位、十位、百位依次来排序，可以定义一个二维数组，其中第一维固定大小为10，即0~9，代表每一位可能的十个数字，第二维则设置大小为有所有元素个数，因为最大可能就是待排序的数组所有的元素某一位都相同，比如待排序数组为1，21，51，41，那二维数组为arr[10][4]，按个位排序时，arr[1]这一维是满的，因为所有四个数字个位都是1，所以都放到这一维中，即arr[1][0]=1，arr[1][1]=21，arr[1][2]=51，arr[1][3]=41，排完之后放回原数组，虽然好像个位这一轮排序并没有效果，但是按十位再向二维数组放一遍，就会得到结果了，十位的二维数组放置结果是arr[0][0]=1，arr[2][0]=21，arr[4][0]=41，arr[5][0]=51，这时候再按顺序拿出来，就已经是排好序的了，如果相同位数有多个值，比如还有个55，由于个位排序时55在arr[5][4]这里，所以放回原数组的时候，55也在51后面，按十位排序的时候，arr[5]这一维就会是天然保证arr[5][0]=51，arr[5][1]=55，此时放回原数组的时候顺序也是对的。对于两个相同的值，不论比较哪一维都会放在二维数组同一维前后位置，且顺序也会原始数组相同，不会交换，所以是稳定排序。<br>
+参考：https://www.jianshu.com/p/8340dfaea3af</p>
+<p><strong>各排序复杂度一览</strong><br>
+<img src="https://zhongfei2016.github.io//post-images/1568427630041.png" alt=""></p>
+<p>选择排序、快速排序、希尔排序、堆排序不是稳定的排序算法，而冒泡排序、插入排序、归并排序和基数排序是稳定的排序算法，其实综合来看，只要存在跨增量互换的排序，都是不稳定的排序，而单纯的相邻互换，或者插入排序，都是稳定的排序。</p>
+<p>稳定性总结可以参考：https://www.cnblogs.com/codingmylife/archive/2012/10/21/2732980.html</p>
+<h2 id="各排序方法使用场景">各排序方法使用场景：</h2>
+<p>当应用到已经排序好的或者基本排序好的数组上时，归并排序的时间复杂度最低。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[HBase安装测试入手]]></title>
+        <id>https://zhongfei2016.github.io//post/hbase-an-zhuang-ce-shi-ru-shou</id>
+        <link href="https://zhongfei2016.github.io//post/hbase-an-zhuang-ce-shi-ru-shou">
+        </link>
+        <updated>2019-07-31T14:41:33.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="下载">下载</h2>
+<p>首先到镜像库上获取最新stable的tar包：</p>
+<p>http://www.apache.org/dyn/closer.cgi/hbase/</p>
+<p>取建议链接即可：</p>
+<pre><code>[fei@fei tools]$ wget https://mirrors.tuna.tsinghua.edu.cn/apache/hbase/stable/hbase-1.4.10-bin.tar.gz
+--2019-07-31 21:37:48--  https://mirrors.tuna.tsinghua.edu.cn/apache/hbase/stable/hbase-1.4.10-bin.tar.gz
+Resolving mirrors.tuna.tsinghua.edu.cn... 2402:f000:1:408:8100::1, 101.6.8.193
+Connecting to mirrors.tuna.tsinghua.edu.cn|2402:f000:1:408:8100::1|:443... failed: Connection timed out.
+Connecting to mirrors.tuna.tsinghua.edu.cn|101.6.8.193|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 113383841 (108M) [application/x-gzip]
+Saving to: “hbase-1.4.10-bin.tar.gz”
+
+100%[=======================================================================&gt;] 113,383,841 11.1M/s   in 10s
+
+2019-07-31 21:39:01 (10.5 MB/s) - “hbase-1.4.10-bin.tar.gz” saved [113383841/113383841]
+
+[fei@fei tools]$ 
+</code></pre>
+<h2 id="配置测试">配置测试</h2>
+<p>下载完成后解压tar包并修改conf目录下的hbase-site.xml文件，配置一个目录地址，后续HBase会将数据写到配置的目录下：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564584506535.bmp" alt=""><br>
+而且因为默认的hbase.rootdir 是指向 /tmp/hbase-${user.name}，服务器重启后数据就会丢失，所以此处最好修改一下。<br>
+启动HBase：</p>
+<pre><code>[fei@fei bin]$ ./start-hbase.sh
+running master, logging to /home/fei/tools/hbase-1.4.10/bin/../logs/hbase-fei-master-fei.out
+Java HotSpot(TM) Server VM warning: ignoring option PermSize=128m; support was removed in 8.0
+Java HotSpot(TM) Server VM warning: ignoring option MaxPermSize=128m; support was removed in 8.0
+[fei@fei bin]$ 
+</code></pre>
+<p>此处报的warning是HBase默认的环境配置导致，可以到conf/hbase-env.sh文件中看下如下配置：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564584711975.bmp" alt=""><br>
+这两个环境变量只是为JDK7准备的，JDK8+完全可以去掉，所以此处可以注释到这两个环境变量，然后重新启动HBase即可，此时再启动就不会报warning了：</p>
+<pre><code>[fei@fei bin]$ ./stop-hbase.sh
+stopping hbase....................
+[fei@fei bin]$ ./start-hbase.sh
+running master, logging to /home/fei/tools/hbase-1.4.10/bin/../logs/hbase-fei-master-fei.out
+[fei@fei bin]$
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[linux git安装配置]]></title>
+        <id>https://zhongfei2016.github.io//post/linux-git-an-zhuang-pei-zhi</id>
+        <link href="https://zhongfei2016.github.io//post/linux-git-an-zhuang-pei-zhi">
+        </link>
+        <updated>2019-07-29T15:40:01.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="安装">安装</h2>
+<p>直接在root用户下执行：</p>
+<pre><code>[root@fei ~]# cd /home/fei/tools/
+[root@fei tools]# yum install git
+</code></pre>
+<h2 id="配置">配置</h2>
+<p>同样root用户下执行：</p>
+<pre><code>[root@fei codes]# git config --global user.name &quot;zhongfei2016&quot;
+[root@fei codes]# git config --global user.email zhongfei1217@163.com
+</code></pre>
+<p>然后生成公钥和私钥，直接一路回车即可：</p>
+<pre><code>[root@fei .ssh]# ssh-keygen -t rsa -C &quot;zhongfei1217@163.com&quot;
+Generating public/private rsa key pair.
+Enter file in which to save the key (/root/.ssh/id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /root/.ssh/id_rsa.
+Your public key has been saved in /root/.ssh/id_rsa.pub.
+The key fingerprint is:
+fb:a1:f7:7c:eb:ed:e7:56:a8:40:d8:96:a6:07:e4:73 zhongfei1217@163.com
+The key's randomart image is:
++--[ RSA 2048]----+
+|                 |
+|        .        |
+|       o o .     |
+|        = E      |
+|        SO     . |
+|        ..o   . .|
+|        .... .  .|
+|         o.o. ..o|
+|        ....ooo==|
++-----------------+
+</code></pre>
+<p>默认生成的公钥和私钥都在/root/.ssh目录下，可以更改下权限，避免后续出现权限问题：</p>
+<pre><code>[root@fei .ssh]# ll
+total 8
+-rw------- 1 root root 1675 Jul 29 23:39 id_rsa
+-rw-r--r-- 1 root root  402 Jul 29 23:39 id_rsa.pub
+[root@fei .ssh]# pwd
+/root/.ssh
+[root@fei .ssh]# chmod 700 id_rsa
+</code></pre>
+<p>生成后，将id_rsa.pub文件内容（SSH key）复制到GitHub的SSH keys页面，new一个Key，Title中可以为该key设置一个别名，保存即可：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564500862784.bmp" alt=""></p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[flink安装测试上手]]></title>
+        <id>https://zhongfei2016.github.io//post/flink-an-zhuang-ce-shi-shang-shou</id>
+        <link href="https://zhongfei2016.github.io//post/flink-an-zhuang-ce-shi-shang-shou">
+        </link>
+        <updated>2019-07-28T06:56:36.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="下载">下载</h2>
+<p>下面是下载地址，从镜像地址下载会比较快，尤其是国内的教育站点：<br>
+https://flink.apache.org/downloads.html</p>
+<h2 id="安装启动">安装启动</h2>
+<p>将tgz包放到Mac/Linux设备目录上，我这里有一个旧笔记本安装的CentOS 6.9，所以就直接放在上面的/home/fei/tools目录下了，解压：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564312326068.bmp" alt=""><br>
+然后直接进到bin目录下执行启动脚本start-cluster.sh即可：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564312500194.bmp" alt=""><br>
+此时可以直接访问http://192.168.0.107:8081，页面会跳转到flink自带的portal页面，可以看到当前有几个可用的slot以及使用情况。<br>
+<img src="https://zhongfei2016.github.io//post-images/1564312772876.bmp" alt=""><br>
+当前只有一个taskManager和一个taskSlot，如果之前启动的start-cluster.sh未停止，又执行了一次start-cluster.sh，会导致taskManager加倍：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564840246907.bmp" alt=""><br>
+但此时jobManager是起不起来的，因为jobManager需要绑定端口，可以看flink-fei-standalonesession-2-fei.log日志：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564840754788.bmp" alt=""><br>
+此时只需要停一下cluster即可，他会按照conf下的slaves配置来停，执行一次只会停一组，并不会都停掉：</p>
+<pre><code>[fei@fei bin]$ ./stop-cluster.sh
+Stopping taskexecutor daemon (pid: 30741) on host fei.
+No standalonesession daemon (pid: 30291) is running anymore on fei.
+[fei@fei bin]$ jps
+5377 StandaloneSessionClusterEntrypoint
+5827 TaskManagerRunner
+31924 Jps
+</code></pre>
+<p>可以看到，停止时是按照pid来停止的，先停止taskManager【taskexecutor daemon (pid: 30741)】，再停止的jobManager【standalonesession daemon (pid: 30291)】，这些pid实际是在/tmp目录下管理的，可以到/tmp目录下查看：</p>
+<pre><code>[fei@fei tmp]$ cat flink-fei-standalonesession.pid
+8299
+[fei@fei tmp]$ cat flink-fei-taskexecutor.pid
+8763
+</code></pre>
+<p>当执行停止脚本stop-cluster.sh后，上述pid文件就会被删除：</p>
+<pre><code>[fei@fei tmp]$ cat flink-fei-standalonesession.pid
+cat: flink-fei-standalonesession.pid: No such file or directory
+</code></pre>
+<h2 id="配置说明">配置说明</h2>
+<p>登到flink的web页面中我们可以看到默认有一个taskManager和一个slot，这个配置在conf目录下的flink-conf.yaml文件中指定了每个taskManager上的slot个数：</p>
+<pre><code># The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline.
+
+taskmanager.numberOfTaskSlots: 1
+</code></pre>
+<p>conf下的slaves文件指定了taskManager的个数，一个localhost就代表一个taskManager，多写几行localhost就会起多个taskManager：</p>
+<pre><code>[fei@fei conf]$ cat slaves
+localhost
+</code></pre>
+<h2 id="测试程序">测试程序</h2>
+<p>可以到example目录下执行一下测试程序，执行前首先要起一个服务端端口用来监听数据流，模拟不断输入的数据端，可以使用netcat来起端口：<br>
+nc -l -p 9990<br>
+<img src="https://zhongfei2016.github.io//post-images/1564313207535.bmp" alt=""><br>
+起来后可以使用netstat来查看端口是否有在监听：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564313312764.bmp" alt=""><br>
+启动成功后，则可以在flink目录下执行测试程序，接收端口数据并提交任务到flink：<br>
+[fei@fei flink-1.7.2]$ ./bin/flink run examples/streaming/SocketWindowWordCount.jar --hostname 192.168.0.107 --port 9990<br>
+<img src="https://zhongfei2016.github.io//post-images/1564314830987.bmp" alt=""><br>
+如果启动报错：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564314928863.bmp" alt=""><br>
+这里有两种可能，一种是9990端口没有正常起监听，按上面说的netstat检查下，或者wget/telnet方式检查下，看是否有响应，另一种可以看flink的日志，在/home/fei/tools/flink-1.7.2/log目录下，看下flink-*-taskexecutor-*.out日志，此日志中可能有如下报错：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564297501439.bmp" alt=""><br>
+注意这里是说MaxDirectMemorySize无效：<font color=red> lnvalid maximum direct memory size: -XX: MaxDirectMemorySize=8388607T </font></p>
+<p>可以将/home/fei/tools/flink-1.7.2/bin目录下的taskmanager.sh的TM_MAX_OFFHEAP_SIZE改为&quot;1024M&quot;，将默认值&quot;8388607T&quot;注释掉作为备份并保存：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564297437920.bmp" alt=""><br>
+此时再重新启动SocketWindowWordCount.jar这个测试程序，然后在起监听的位置输入不同的字符串：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564315535154.bmp" alt=""><br>
+log目录下的flink-*-taskexecutor-*.out日志就会打印出统计的单词个数：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564315564138.bmp" alt=""></p>
+<h2 id="进程查看">进程查看</h2>
+<p>flink常用的进程有两个，一个jobManager，一个taskManager，这里通过WordCount.jar来演示：</p>
+<pre><code>[fei@fei bin]$ ./flink run ../examples/streaming/WordCount.jar --input  test.txt
+Starting execution of program
+Printing result to stdout. Use --output to specify output path.
+Program execution finished
+Job with JobID a0b57877a6564ba0efe8826dca2aff02 has finished.
+Job Runtime: 951 ms
+</code></pre>
+<p>其中--input用来指定输入的文件，这个文件如果开始有空行，会报错：<br>
+<img src="https://zhongfei2016.github.io//post-images/1564839749115.bmp" alt=""><br>
+执行完后我们通过jps命令可以查看所有进程：</p>
+<pre><code>[fei@fei bin]$ jps
+5377 StandaloneSessionClusterEntrypoint
+5827 TaskManagerRunner
+29316 Jps
+</code></pre>
+<p>其中TaskManagerRunner就是taskManager，StandaloneSessionClusterEntrypoint就是jobManager，我们可以通过ps指令查看taskManager的一些参数：</p>
+<pre><code>[fei@fei bin]$ ps -aux | grep 5827
+Warning: bad syntax, perhaps a bogus '-'? See /usr/share/doc/procps-3.2.8/FAQ
+fei       5827  1.2 25.4 1445596 791080 ?      Sl   Jul29  89:18 /usr/java/jdk1.8.0_161/bin/java -XX:+UseG1GC -Xms922M -Xmx922M -XX:MaxDirectMemorySize=1024M -Dlog.file=/home/fei/tools/flink-1.7.2/log/flink-fei-taskexecutor-1-fei.log -Dlog4j.configuration=file:/home/fei/tools/flink-1.7.2/conf/log4j.properties -Dlogback.configurationFile=file:/home/fei/tools/flink-1.7.2/conf/logback.xml -classpath /home/fei/tools/flink-1.7.2/lib/flink-python_2.11-1.7.2.jar:/home/fei/tools/flink-1.7.2/lib/log4j-1.2.17.jar:/home/fei/tools/flink-1.7.2/lib/slf4j-log4j12-1.7.15.jar:/home/fei/tools/flink-1.7.2/lib/flink-dist_2.11-1.7.2.jar::: org.apache.flink.runtime.taskexecutor.TaskManagerRunner --configDir /home/fei/tools/flink-1.7.2/conf
+fei      29569  0.0  0.0   4428   788 pts/1    S+   21:34   0:00 grep 5827
+</code></pre>
+]]></content>
+    </entry>
+</feed>
