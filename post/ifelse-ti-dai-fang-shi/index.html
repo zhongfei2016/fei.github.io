@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>统计list中连续超阈值n次的次数 | NOTES</title>
+<title>if...else替代方式 | NOTES</title>
 <meta name="description" content="Life is struggle.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -91,42 +91,43 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">统计list中连续超阈值n次的次数</h2>
-            <div class="post-date">2019-09-13</div>
+            <h2 class="post-title">if...else替代方式</h2>
+            <div class="post-date">2019-09-28</div>
             
             <div class="post-content">
-              <p>一个Double类型的list，求取此list中元素值连续大于一个阈值n次（n可以修改）的总次数，比如阈值是4，list中所有元素为：1,5,7,3,4,8,11,1,7,1，要求连续2次超过阈值才计次，那么结果应该是2次，5,7一次，4,8,11一次，7虽然大于4，但由于前后均小于4，所以不计次，代码实现如下：</p>
-<pre><code>    /**
-     * 
-     * @param list 要统计的列表
-     * @param threshold 阈值
-     * @param count 要求超阈值连续次数
-     * @return
-     */
-    public static int calExceedNum(List&lt;Double&gt; list, double threshold, int count)
+              <p>在业务代码判断逻辑中可能会遇到大量的if...else判断，如果直接使用如下方式：</p>
+<pre><code>if(...) {
+    ...
+} else if(...) {
+    ...
+} else {
+    ...
+}
+</code></pre>
+<p>会使得代码臃肿且易读性降低，包括后续findbugs等检查都会有问题，所以需要提供更好的方式来实现。</p>
+<h2 id="表驱动法">表驱动法</h2>
+<p>通过定义一个数组，并在数组的指定索引位置给定结果值的方式来返回结果，即将输入值作为数组索引，直接通过结果值组成的数组，把入参当索引返回结果值：</p>
+<pre><code>private static int getScore(int num)
+{
+    int[] scores = {30, 28, 22, 16, 8, 5};
+    if (num &gt;= 0 &amp;&amp; num &lt;= 5)
     {
-        //符合要求的次数
-        int cnt = 0;
-        //单次连续超阈值的次数
-        int continueCnt = 0;
-        for (int i = 0; i &lt; list.size(); i++)
-        {
-            if (list.get(i) &lt; threshold)
-            {
-                continueCnt = 0;
-                continue;
-            }
-            else
-            {
-                continueCnt++;
-            }
-            if(continueCnt==count)
-            {
-                cnt++;
-            }
-        }
-        return cnt;
+        return scores[num];
     }
+    return 0;
+}
+</code></pre>
+<p>如果入参比较大，比如0-100这样的分数，可以根据得分范围划定索引，比如0-59是fail，60-69是normal，70-79是good，80-89是great，90-100是excellent，则可以取除以10的商做索引：</p>
+<pre><code>private static String getScore(int num)
+{
+    String[] scores = {&quot;normal&quot;, &quot;good&quot;, &quot;great&quot;, &quot;excellent&quot;};
+    int level = num / 10;
+    if (level &gt;= 6 &amp;&amp; level &lt;= 10)
+    {
+        return scores[level - 6];
+    }
+    return &quot;fail&quot;;
+}
 </code></pre>
 
             </div>
@@ -134,9 +135,9 @@
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://zhongfei2016.github.io//post/pai-xu-suan-fa-zong-jie">
+                <a href="https://zhongfei2016.github.io//post/shu-ju-jie-gou">
                   <h3 class="post-title">
-                    排序算法总结
+                    java集合数据结构
                   </h3>
                 </a>
               </div>
