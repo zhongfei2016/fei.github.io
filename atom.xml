@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zhongfei2016.github.io/</id>
     <title>NOTES</title>
-    <updated>2019-10-05T04:51:18.751Z</updated>
+    <updated>2019-10-18T14:13:05.206Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zhongfei2016.github.io/"/>
     <link rel="self" href="https://zhongfei2016.github.io//atom.xml"/>
@@ -10,6 +10,20 @@
     <logo>https://zhongfei2016.github.io//images/avatar.png</logo>
     <icon>https://zhongfei2016.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, NOTES</rights>
+    <entry>
+        <title type="html"><![CDATA[Kafka单元测试方法]]></title>
+        <id>https://zhongfei2016.github.io//post/kafka-dan-yuan-ce-shi-fang-fa</id>
+        <link href="https://zhongfei2016.github.io//post/kafka-dan-yuan-ce-shi-fang-fa">
+        </link>
+        <updated>2019-10-18T13:51:49.000Z</updated>
+        <content type="html"><![CDATA[<p>stackoverflow上有这样一个问题：<br>
+How can I instantiate a Mock Kafka Topic for junit tests?<br>
+通过模拟一个kafka主题来对kafka进行单元测试，参考：<br>
+https://stackoverflow.com/questions/33748328/how-can-i-instantiate-a-mock-kafka-topic-for-junit-tests</p>
+<p>另外可以参考：<br>
+https://gist.github.com/asmaier/6465468</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[if...else替代方式]]></title>
         <id>https://zhongfei2016.github.io//post/ifelse-ti-dai-fang-shi</id>
