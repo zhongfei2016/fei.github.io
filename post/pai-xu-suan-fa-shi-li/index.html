@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1571407980071">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1571474466942">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1571407980071" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1571474466942" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -372,6 +372,62 @@ public class SortDemo
         {
             arr[left++] = temp[i];
         }
+    }
+
+    /**
+     * 计数排序，一般用于跨度不大的整数数组排序
+     *
+     * @param arr
+     * @return
+     */
+    public static int[] countSort(int[] arr) {
+        //求最大值最小值计算临时数组大小
+        int min = min(arr);
+        int max = max(arr);
+        int[] arrTemp = new int[max - min + 1];
+        //将每个值的出现次数放在临时数组对应位置
+        for (int i : arr) {
+            arrTemp[i - min]++;
+        }
+        //将每个值的次数都加上前面值次数的累加值，计算出每个值的绝对位置
+        for (int i = 1; i &lt; arrTemp.length; i++) {
+            arrTemp[i] += arrTemp[i - 1];
+        }
+        //arr[i] - min]取出当前值在arrTemp的位置，根据位置取出其在arrTemp的绝对位置
+        //由于取出的绝对位置是包括本数字之前数字所有出现次数的累加，所以转成数组真实位置需要减1
+        //取出后arrTemp中的累计次数需要对应减1
+        int[] sortedArray = new int[arr.length];
+        for (int i = 0; i &lt; arr.length; i++) {
+            sortedArray[arrTemp[arr[i] - min] - 1] = arr[i];
+            arrTemp[arr[i] - min]--;
+        }
+        return sortedArray;
+    }
+
+    public static int min(int[] arr) {
+        if (arr == null || arr.length &lt; 1) {
+            return 0;
+        }
+        int min = 0;
+        for (int item : arr) {
+            if (item &lt; min) {
+                min = item;
+            }
+        }
+        return min;
+    }
+
+    public static int max(int[] arr) {
+        if (arr == null || arr.length &lt; 1) {
+            return 0;
+        }
+        int max = 0;
+        for (int item : arr) {
+            if (item &gt; max) {
+                max = item;
+            }
+        }
+        return max;
     }
 
     private static void swap(int[] arr, int i, int j)
