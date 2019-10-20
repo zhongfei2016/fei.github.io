@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>统计list中连续超阈值n次的次数 | NOTES</title>
+<title>单例模式 | NOTES</title>
 <meta name="description" content="Life is struggle.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -91,50 +91,33 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">统计list中连续超阈值n次的次数</h2>
-            <div class="post-date">2019-09-13</div>
+            <h2 class="post-title">单例模式</h2>
+            <div class="post-date">2019-10-20</div>
             
             <div class="post-content">
-              <p>一个Double类型的list，求取此list中元素值连续大于一个阈值n次（n可以修改）的总次数，比如阈值是4，list中所有元素为：1,5,7,3,4,8,11,1,7,1，要求连续2次超过阈值才计次，那么结果应该是2次，5,7一次，4,8,11一次，7虽然大于4，但由于前后均小于4，所以不计次，代码实现如下：</p>
-<pre><code>    /**
-     * 
-     * @param list 要统计的列表
-     * @param threshold 阈值
-     * @param count 要求超阈值连续次数
-     * @return
-     */
-    public static int calExceedNum(List&lt;Double&gt; list, double threshold, int count)
-    {
-        //符合要求的次数
-        int cnt = 0;
-        //单次连续超阈值的次数
-        int continueCnt = 0;
-        for (int i = 0; i &lt; list.size(); i++)
-        {
-            if (list.get(i) &lt; threshold)
-            {
-                continueCnt = 0;
-                continue;
-            }
-            else
-            {
-                continueCnt++;
-            }
-            if(continueCnt==count)
-            {
-                cnt++;
+              <p>单例模式是常用的设计模式，旨在一次加载，全周期使用，但是如果使用不当，仍然会造成单例多实例化或者实例化未完成即使用的问题。</p>
+<pre><code>public class SingleInstance{
+    private static volatile SingleInstance instance = null;
+    private SingleInstance(){}
+    public static SingleInstance getInstance(){
+        if(instance == null){
+            synchronized(SingleInstance.class){
+                if(instance == null){
+                    instance = new SingleInstance();
+                }        
             }
         }
-        return cnt;
+        return instance;    
     }
+}
 </code></pre>
 
             </div>
             
               <div class="tag-container">
                 
-                  <a href="https://zhongfei2016.github.io//tag/gMhaodpAd" class="tag">
-                    算法基础
+                  <a href="https://zhongfei2016.github.io//tag/zmdJt-Uta" class="tag">
+                    设计模式
                   </a>
                 
               </div>
@@ -142,9 +125,9 @@
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://zhongfei2016.github.io//post/pai-xu-suan-fa-zong-jie">
+                <a href="https://zhongfei2016.github.io//post/kafka-dan-yuan-ce-shi-fang-fa">
                   <h3 class="post-title">
-                    排序算法总结
+                    [转载] Kafka单元测试方法
                   </h3>
                 </a>
               </div>

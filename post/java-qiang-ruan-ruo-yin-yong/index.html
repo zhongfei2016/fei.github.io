@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>java数据类型及字长说明 | NOTES</title>
+<title>Java强、软、弱引用 | NOTES</title>
 <meta name="description" content="Life is struggle.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -91,28 +91,55 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">java数据类型及字长说明</h2>
-            <div class="post-date">2019-09-28</div>
+            <h2 class="post-title">Java强、软、弱引用</h2>
+            <div class="post-date">2019-10-20</div>
             
             <div class="post-content">
-              <p>在JAVA中一共有八种基本数据类型，他们分别是 ：<br>
-byte<br>
-short<br>
-int<br>
-long<br>
-float<br>
-double<br>
-char<br>
-boolean</p>
-<p>其中byte、short、int、long都是表示整数的，只不过他们的取值范围不一样 ：<br>
-<strong>byte</strong>的取值范围为-128~127，占用1个字节（-2的7次方到2的7次方-1）<br>
-<strong>short</strong>的取值范围为-32768~32767，占用2个字节（-2的15次方到2的15次方-1）<br>
-<strong>int</strong>的取值范围为（-2147483648~2147483647），占用4个字节（-2的31次方到2的31次方-1）<br>
-<strong>long</strong>的取值范围为（-9223372036854774808~9223372036854774807），占用8个字节（-2的63次方到2的63次方-1）<br>
-<strong>float</strong>占四个字节；double占八个字节；<br>
-<strong>boolean</strong>只有true和false，占用的空间官方并没有给出准确的说法，需要看实际虚拟机的实现，《Java虚拟机规范》给出了单个boolean定义时虚拟机会编译成4个字节的int型，而boolean数组会编译为1个byte的说法，可参考：https://www.jianshu.com/p/2f663dc820d0<br>
-<strong>char</strong>占两个字节，其中其前128位与ASCII码兼容。<br>
-参考：https://www.cnblogs.com/singlesoar/p/5688915.html</p>
+              <h3 id="强引用">强引用</h3>
+<p>强引用就是我们每天在java中用到的最常见的引用，比如String str= new String(&quot;str&quot;);<br>
+强引用不会被gc掉，即便JVM发生OOM也不会gc强引用。</p>
+<h3 id="弱引用">弱引用</h3>
+<p>弱引用则可以是你定义的对象无法一直保存在内存中，一个对象可以同时被多个引用指向，如果某个时刻某个对象不再有强引用指向他，那他就会被GC。<br>
+假设垃圾收集器在某个时间点决定一个对象是弱可达的(weakly reachable)（也就是说当前指向它的全都是弱引用），这时垃圾收集器会清除所有指向该对象的弱引用，然后垃圾收集器会把这个弱可达对象标记为可终结(finalizable)的，这样它们随后就会被回收。与此同时或稍后，垃圾收集器会把那些刚清除的弱引用放入创建弱引用对象时所登记到的引用队列(Reference Queue)中。</p>
+<h3 id="软引用">软引用</h3>
+<p>软引用则比弱引用强一些，即如果内存满了时候，才会把没有强引用而只有软引用的对象GC掉，如果内存未满，即便没有强引用指向他，也不会被GC。</p>
+<pre><code>
+public static void main(String[] args)
+    {
+        String str = new String(&quot;originString&quot;);
+        SoftReference&lt;String&gt; softStr = new SoftReference&lt;&gt;(str);
+        WeakReference&lt;String&gt; weakStr = new WeakReference&lt;&gt;(str);
+        // 强制进行垃圾回收
+        System.gc();
+        System.runFinalization();
+        // 此时由于有强引用指向对象，所以不被回收
+        System.out.println(softStr.get());
+        System.out.println(weakStr.get());
+        // 取消强引用
+        str = null;
+        System.gc();
+        System.runFinalization();
+        // 此时由于内存足够，软引用对象并没有被回收
+        System.out.println(softStr.get());
+        // 虽然没有强引用指向，但此时由于内存足够，而且还有软引用，所以对象并没有被回收
+        System.out.println(weakStr.get());
+        // 取消软引用
+        softStr = null;
+        System.gc();
+        System.runFinalization();
+        // 此时强软引用都没有了，所以只要gc，弱引用指向的对象就被回收了
+        System.out.println(weakStr.get());
+    }
+</code></pre>
+<p>打印结果：<br>
+originString<br>
+originString<br>
+originString<br>
+originString<br>
+Null<br>
+上述调用是因为直接调用System.gc()只会把这次gc请求记录下来，等到runFinalization=true的时候才会先去执行GC，runFinalization=true之后会在允许一次system.gc()。之后在call System.gc()还会重复上面的行为。所以System.gc()要跟System.runFinalization()一起搭配使用才好。<br>
+https://xindoo.blog.csdn.net/article/details/87868480<br>
+https://www.cnblogs.com/android-blogs/p/5566277.html</p>
 
             </div>
             
@@ -127,9 +154,9 @@ boolean</p>
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://zhongfei2016.github.io//post/pai-xu-suan-fa-shi-li">
+                <a href="https://zhongfei2016.github.io//post/dan-li-mo-shi">
                   <h3 class="post-title">
-                    排序算法示例
+                    单例模式
                   </h3>
                 </a>
               </div>

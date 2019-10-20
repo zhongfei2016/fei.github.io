@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zhongfei2016.github.io/</id>
     <title>NOTES</title>
-    <updated>2019-10-20T14:19:48.888Z</updated>
+    <updated>2019-10-20T14:42:06.798Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zhongfei2016.github.io/"/>
     <link rel="self" href="https://zhongfei2016.github.io//atom.xml"/>
@@ -11,89 +11,202 @@
     <icon>https://zhongfei2016.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, NOTES</rights>
     <entry>
+        <title type="html"><![CDATA[Java强、软、弱引用]]></title>
+        <id>https://zhongfei2016.github.io//post/java-qiang-ruan-ruo-yin-yong</id>
+        <link href="https://zhongfei2016.github.io//post/java-qiang-ruan-ruo-yin-yong">
+        </link>
+        <updated>2019-10-20T14:23:06.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="强引用">强引用</h3>
+<p>强引用就是我们每天在java中用到的最常见的引用，比如String str= new String(&quot;str&quot;);<br>
+强引用不会被gc掉，即便JVM发生OOM也不会gc强引用。</p>
+<h3 id="弱引用">弱引用</h3>
+<p>弱引用则可以是你定义的对象无法一直保存在内存中，一个对象可以同时被多个引用指向，如果某个时刻某个对象不再有强引用指向他，那他就会被GC。<br>
+假设垃圾收集器在某个时间点决定一个对象是弱可达的(weakly reachable)（也就是说当前指向它的全都是弱引用），这时垃圾收集器会清除所有指向该对象的弱引用，然后垃圾收集器会把这个弱可达对象标记为可终结(finalizable)的，这样它们随后就会被回收。与此同时或稍后，垃圾收集器会把那些刚清除的弱引用放入创建弱引用对象时所登记到的引用队列(Reference Queue)中。</p>
+<h3 id="软引用">软引用</h3>
+<p>软引用则比弱引用强一些，即如果内存满了时候，才会把没有强引用而只有软引用的对象GC掉，如果内存未满，即便没有强引用指向他，也不会被GC。</p>
+<pre><code>
+public static void main(String[] args)
+    {
+        String str = new String(&quot;originString&quot;);
+        SoftReference&lt;String&gt; softStr = new SoftReference&lt;&gt;(str);
+        WeakReference&lt;String&gt; weakStr = new WeakReference&lt;&gt;(str);
+        // 强制进行垃圾回收
+        System.gc();
+        System.runFinalization();
+        // 此时由于有强引用指向对象，所以不被回收
+        System.out.println(softStr.get());
+        System.out.println(weakStr.get());
+        // 取消强引用
+        str = null;
+        System.gc();
+        System.runFinalization();
+        // 此时由于内存足够，软引用对象并没有被回收
+        System.out.println(softStr.get());
+        // 虽然没有强引用指向，但此时由于内存足够，而且还有软引用，所以对象并没有被回收
+        System.out.println(weakStr.get());
+        // 取消软引用
+        softStr = null;
+        System.gc();
+        System.runFinalization();
+        // 此时强软引用都没有了，所以只要gc，弱引用指向的对象就被回收了
+        System.out.println(weakStr.get());
+    }
+</code></pre>
+<p>打印结果：<br>
+originString<br>
+originString<br>
+originString<br>
+originString<br>
+Null<br>
+上述调用是因为直接调用System.gc()只会把这次gc请求记录下来，等到runFinalization=true的时候才会先去执行GC，runFinalization=true之后会在允许一次system.gc()。之后在call System.gc()还会重复上面的行为。所以System.gc()要跟System.runFinalization()一起搭配使用才好。<br>
+https://xindoo.blog.csdn.net/article/details/87868480<br>
+https://www.cnblogs.com/android-blogs/p/5566277.html</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[单例模式]]></title>
+        <id>https://zhongfei2016.github.io//post/dan-li-mo-shi</id>
+        <link href="https://zhongfei2016.github.io//post/dan-li-mo-shi">
+        </link>
+        <updated>2019-10-20T14:19:52.000Z</updated>
+        <content type="html"><![CDATA[<p>单例模式是常用的设计模式，旨在一次加载，全周期使用，但是如果使用不当，仍然会造成单例多实例化或者实例化未完成即使用的问题。</p>
+<pre><code>public class SingleInstance{
+    private static volatile SingleInstance instance = null;
+    private SingleInstance(){}
+    public static SingleInstance getInstance(){
+        if(instance == null){
+            synchronized(SingleInstance.class){
+                if(instance == null){
+                    instance = new SingleInstance();
+                }        
+            }
+        }
+        return instance;    
+    }
+}
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[[转载] Kafka单元测试方法]]></title>
         <id>https://zhongfei2016.github.io//post/kafka-dan-yuan-ce-shi-fang-fa</id>
         <link href="https://zhongfei2016.github.io//post/kafka-dan-yuan-ce-shi-fang-fa">
         </link>
         <updated>2019-10-18T13:51:49.000Z</updated>
-        <content type="html"><![CDATA[<pre><code>private static final String TOPIC = &quot;topic-1&quot;;
-private static final String BROKERHOST = &quot;127.0.0.1&quot;;
-private static final String BROKERPORT = &quot;9092&quot;;
-private static final String ZKPORT = &quot;2181&quot;;
+        <content type="html"><![CDATA[<h3 id="代码如下">代码如下：</h3>
+<pre><code>import kafka.server.KafkaConfig;
+import kafka.server.KafkaServerStartable;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.zookeeper.server.ZooKeeperServerMain;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-private String nodeId = &quot;0&quot;;
-private String zkConnect = &quot;localhost:&quot; + ZKPORT;
-private KafkaServerStartable server;
-KafkaProducer&lt;Integer, byte[]&gt; producer;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Properties;
 
-@Before
-public void setup() throws IOException {
-    //zookeeper
-    startZK();
-    //start kafka
-    startKafka();
-    // setup producer
-    setupProducer();
-}
+public class KafkaProduceTest {
+    private static final String TOPIC = &quot;topic-1&quot;;
+    private static final String BROKERHOST = &quot;127.0.0.1&quot;;
+    private static final String BROKERPORT = &quot;9092&quot;;
+    private static final String ZKPORT = &quot;2181&quot;;
 
-@After
-public void tearDown() throws Exception {
-    server.shutdown();
-    server.awaitShutdown();
-}
+    private String nodeId = &quot;0&quot;;
+    private String zkConnect = &quot;localhost:&quot; + ZKPORT;
+    private KafkaServerStartable server;
+    KafkaProducer&lt;Integer, byte[]&gt; producer;
 
-private static void startZK() throws IOException {
-    final File zkTmpDir = File.createTempFile(&quot;zookeeper&quot;, &quot;test&quot;);
-    zkTmpDir.delete();
-    zkTmpDir.mkdir();
+    @Before
+    public void setup() throws IOException {
+        //zookeeper
+        startZK();
+        //start kafka
+        startKafka();
+        // setup producer
+        setupProducer();
+    }
 
-    new Thread() {
-        @Override
-        public void run() {
-            ZooKeeperServerMain.main(new String[]{ZKPORT, zkTmpDir.getAbsolutePath()});
+    @After
+    public void tearDown() throws Exception {
+        server.shutdown();
+        server.awaitShutdown();
+    }
+
+    private static void startZK() throws IOException {
+        final File zkTmpDir = File.createTempFile(&quot;zookeeper&quot;, &quot;test&quot;);
+        zkTmpDir.delete();
+        zkTmpDir.mkdir();
+
+        new Thread() {
+            @Override
+            public void run() {
+                ZooKeeperServerMain.main(new String[]{ZKPORT, zkTmpDir.getAbsolutePath()});
+            }
+        }.start();
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
         }
-    }.start();
-
-    try {
-        Thread.sleep(1000);
-    } catch (InterruptedException e) {
     }
-}
 
-private void startKafka() {
-    Properties props = new Properties();
-    props.put(&quot;broker.id&quot;, nodeId);
-    props.put(&quot;port&quot;, BROKERPORT);
-    props.put(&quot;zookeeper.connect&quot;, zkConnect);
-    props.put(&quot;host.name&quot;, &quot;127.0.0.1&quot;);
-    KafkaConfig conf = new KafkaConfig(props);
-    server = new KafkaServerStartable(conf);
-    server.startup();
-}
-
-private void setupProducer() {
-    Properties producerProps = new Properties();
-    producerProps.setProperty(&quot;bootstrap.servers&quot;, BROKERHOST + &quot;:&quot; + BROKERPORT);
-    producerProps.setProperty(&quot;key.serializer&quot;, &quot;org.apache.kafka.common.serialization.IntegerSerializer&quot;);
-    producerProps.setProperty(&quot;value.serializer&quot;, &quot;org.apache.kafka.common.serialization.ByteArraySerializer&quot;);
-    producer = new KafkaProducer&lt;&gt;(producerProps);
-}
-
-@Test
-public void testKafkaProducer() throws Exception {
-    for (int i = 0; i &lt; 1000; i++) {
-        producer.send(new ProducerRecord&lt;&gt;(TOPIC, 0, 1, (&quot;There are some words here to count -&quot; + Integer.toString(i)).getBytes(Charset.forName(&quot;UTF-8&quot;))));
-        Thread.sleep(10);
+    private void startKafka() {
+        Properties props = new Properties();
+        props.put(&quot;broker.id&quot;, nodeId);
+        props.put(&quot;port&quot;, BROKERPORT);
+        props.put(&quot;zookeeper.connect&quot;, zkConnect);
+        props.put(&quot;host.name&quot;, &quot;127.0.0.1&quot;);
+        KafkaConfig conf = new KafkaConfig(props);
+        server = new KafkaServerStartable(conf);
+        server.startup();
     }
-    System.out.println(&quot;End Test&quot;);
+
+    private void setupProducer() {
+        Properties producerProps = new Properties();
+        producerProps.setProperty(&quot;bootstrap.servers&quot;, BROKERHOST + &quot;:&quot; + BROKERPORT);
+        producerProps.setProperty(&quot;key.serializer&quot;, &quot;org.apache.kafka.common.serialization.IntegerSerializer&quot;);
+        producerProps.setProperty(&quot;value.serializer&quot;, &quot;org.apache.kafka.common.serialization.ByteArraySerializer&quot;);
+        producer = new KafkaProducer&lt;&gt;(producerProps);
+    }
+
+    @Test
+    public void testSparkWordCount() throws Exception {
+        for (int i = 0; i &lt; 1000; i++) {
+            producer.send(new ProducerRecord&lt;&gt;(TOPIC, 0, 1, (&quot;There are some words here to count -&quot; + Integer.toString(i)).getBytes(Charset.forName(&quot;UTF-8&quot;))));
+            Thread.sleep(10);
+        }
+        System.out.println(&quot;End Test&quot;);
+    }
 }
 </code></pre>
+<h3 id="pom依赖">pom依赖</h3>
+<pre><code>        &lt;dependency&gt;
+            &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+            &lt;artifactId&gt;kafka_2.12&lt;/artifactId&gt;
+            &lt;version&gt;2.1.0&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;log4j&lt;/groupId&gt;
+            &lt;artifactId&gt;log4j&lt;/artifactId&gt;
+            &lt;version&gt;1.2.17&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;junit&lt;/groupId&gt;
+            &lt;artifactId&gt;junit&lt;/artifactId&gt;
+            &lt;version&gt;4.12&lt;/version&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+</code></pre>
+<p>转载自：<br>
+https://ransilberman.com/2013/07/19/how-to-unit-test-kafka/</p>
 <p>stackoverflow上有这样一个问题：<br>
 How can I instantiate a Mock Kafka Topic for junit tests?<br>
 通过模拟一个kafka主题来对kafka进行单元测试，参考：<br>
-https://stackoverflow.com/questions/33748328/how-can-i-instantiate-a-mock-kafka-topic-for-junit-tests<br>
-https://ransilberman.com/2013/07/19/how-to-unit-test-kafka/<br>
-另外可以参考：<br>
+https://stackoverflow.com/questions/33748328/how-can-i-instantiate-a-mock-kafka-topic-for-junit-tests</p>
+<p>另外可以参考：<br>
 https://gist.github.com/asmaier/6465468</p>
 ]]></content>
     </entry>
@@ -695,152 +808,6 @@ stopping hbase....................
 [fei@fei bin]$ ./start-hbase.sh
 running master, logging to /home/fei/tools/hbase-1.4.10/bin/../logs/hbase-fei-master-fei.out
 [fei@fei bin]$
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[linux git安装配置]]></title>
-        <id>https://zhongfei2016.github.io//post/linux-git-an-zhuang-pei-zhi</id>
-        <link href="https://zhongfei2016.github.io//post/linux-git-an-zhuang-pei-zhi">
-        </link>
-        <updated>2019-07-29T15:40:01.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="安装">安装</h2>
-<p>直接在root用户下执行：</p>
-<pre><code>[root@fei ~]# cd /home/fei/tools/
-[root@fei tools]# yum install git
-</code></pre>
-<h2 id="配置">配置</h2>
-<p>同样root用户下执行：</p>
-<pre><code>[root@fei codes]# git config --global user.name &quot;zhongfei2016&quot;
-[root@fei codes]# git config --global user.email zhongfei1217@163.com
-</code></pre>
-<p>然后生成公钥和私钥，直接一路回车即可：</p>
-<pre><code>[root@fei .ssh]# ssh-keygen -t rsa -C &quot;zhongfei1217@163.com&quot;
-Generating public/private rsa key pair.
-Enter file in which to save the key (/root/.ssh/id_rsa):
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /root/.ssh/id_rsa.
-Your public key has been saved in /root/.ssh/id_rsa.pub.
-The key fingerprint is:
-fb:a1:f7:7c:eb:ed:e7:56:a8:40:d8:96:a6:07:e4:73 zhongfei1217@163.com
-The key's randomart image is:
-+--[ RSA 2048]----+
-|                 |
-|        .        |
-|       o o .     |
-|        = E      |
-|        SO     . |
-|        ..o   . .|
-|        .... .  .|
-|         o.o. ..o|
-|        ....ooo==|
-+-----------------+
-</code></pre>
-<p>默认生成的公钥和私钥都在/root/.ssh目录下，可以更改下权限，避免后续出现权限问题：</p>
-<pre><code>[root@fei .ssh]# ll
-total 8
--rw------- 1 root root 1675 Jul 29 23:39 id_rsa
--rw-r--r-- 1 root root  402 Jul 29 23:39 id_rsa.pub
-[root@fei .ssh]# pwd
-/root/.ssh
-[root@fei .ssh]# chmod 700 id_rsa
-</code></pre>
-<p>生成后，将id_rsa.pub文件内容（SSH key）复制到GitHub的SSH keys页面，new一个Key，Title中可以为该key设置一个别名，保存即可：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564500862784.bmp" alt=""></p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[flink安装测试上手]]></title>
-        <id>https://zhongfei2016.github.io//post/flink-an-zhuang-ce-shi-shang-shou</id>
-        <link href="https://zhongfei2016.github.io//post/flink-an-zhuang-ce-shi-shang-shou">
-        </link>
-        <updated>2019-07-28T06:56:36.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="下载">下载</h2>
-<p>下面是下载地址，从镜像地址下载会比较快，尤其是国内的教育站点：<br>
-https://flink.apache.org/downloads.html</p>
-<h2 id="安装启动">安装启动</h2>
-<p>将tgz包放到Mac/Linux设备目录上，我这里有一个旧笔记本安装的CentOS 6.9，所以就直接放在上面的/home/fei/tools目录下了，解压：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564312326068.bmp" alt=""><br>
-然后直接进到bin目录下执行启动脚本start-cluster.sh即可：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564312500194.bmp" alt=""><br>
-此时可以直接访问http://192.168.0.107:8081，页面会跳转到flink自带的portal页面，可以看到当前有几个可用的slot以及使用情况。<br>
-<img src="https://zhongfei2016.github.io//post-images/1564312772876.bmp" alt=""><br>
-当前只有一个taskManager和一个taskSlot，如果之前启动的start-cluster.sh未停止，又执行了一次start-cluster.sh，会导致taskManager加倍：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564840246907.bmp" alt=""><br>
-但此时jobManager是起不起来的，因为jobManager需要绑定端口，可以看flink-fei-standalonesession-2-fei.log日志：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564840754788.bmp" alt=""><br>
-此时只需要停一下cluster即可，他会按照conf下的slaves配置来停，执行一次只会停一组，并不会都停掉：</p>
-<pre><code>[fei@fei bin]$ ./stop-cluster.sh
-Stopping taskexecutor daemon (pid: 30741) on host fei.
-No standalonesession daemon (pid: 30291) is running anymore on fei.
-[fei@fei bin]$ jps
-5377 StandaloneSessionClusterEntrypoint
-5827 TaskManagerRunner
-31924 Jps
-</code></pre>
-<p>可以看到，停止时是按照pid来停止的，先停止taskManager【taskexecutor daemon (pid: 30741)】，再停止的jobManager【standalonesession daemon (pid: 30291)】，这些pid实际是在/tmp目录下管理的，可以到/tmp目录下查看：</p>
-<pre><code>[fei@fei tmp]$ cat flink-fei-standalonesession.pid
-8299
-[fei@fei tmp]$ cat flink-fei-taskexecutor.pid
-8763
-</code></pre>
-<p>当执行停止脚本stop-cluster.sh后，上述pid文件就会被删除：</p>
-<pre><code>[fei@fei tmp]$ cat flink-fei-standalonesession.pid
-cat: flink-fei-standalonesession.pid: No such file or directory
-</code></pre>
-<h2 id="配置说明">配置说明</h2>
-<p>登到flink的web页面中我们可以看到默认有一个taskManager和一个slot，这个配置在conf目录下的flink-conf.yaml文件中指定了每个taskManager上的slot个数：</p>
-<pre><code># The number of task slots that each TaskManager offers. Each slot runs one parallel pipeline.
-
-taskmanager.numberOfTaskSlots: 1
-</code></pre>
-<p>conf下的slaves文件指定了taskManager的个数，一个localhost就代表一个taskManager，多写几行localhost就会起多个taskManager：</p>
-<pre><code>[fei@fei conf]$ cat slaves
-localhost
-</code></pre>
-<h2 id="测试程序">测试程序</h2>
-<p>可以到example目录下执行一下测试程序，执行前首先要起一个服务端端口用来监听数据流，模拟不断输入的数据端，可以使用netcat来起端口：<br>
-nc -l -p 9990<br>
-<img src="https://zhongfei2016.github.io//post-images/1564313207535.bmp" alt=""><br>
-起来后可以使用netstat来查看端口是否有在监听：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564313312764.bmp" alt=""><br>
-启动成功后，则可以在flink目录下执行测试程序，接收端口数据并提交任务到flink：<br>
-[fei@fei flink-1.7.2]$ ./bin/flink run examples/streaming/SocketWindowWordCount.jar --hostname 192.168.0.107 --port 9990<br>
-<img src="https://zhongfei2016.github.io//post-images/1564314830987.bmp" alt=""><br>
-如果启动报错：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564314928863.bmp" alt=""><br>
-这里有两种可能，一种是9990端口没有正常起监听，按上面说的netstat检查下，或者wget/telnet方式检查下，看是否有响应，另一种可以看flink的日志，在/home/fei/tools/flink-1.7.2/log目录下，看下flink-*-taskexecutor-*.out日志，此日志中可能有如下报错：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564297501439.bmp" alt=""><br>
-注意这里是说MaxDirectMemorySize无效：<font color=red> lnvalid maximum direct memory size: -XX: MaxDirectMemorySize=8388607T </font></p>
-<p>可以将/home/fei/tools/flink-1.7.2/bin目录下的taskmanager.sh的TM_MAX_OFFHEAP_SIZE改为&quot;1024M&quot;，将默认值&quot;8388607T&quot;注释掉作为备份并保存：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564297437920.bmp" alt=""><br>
-此时再重新启动SocketWindowWordCount.jar这个测试程序，然后在起监听的位置输入不同的字符串：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564315535154.bmp" alt=""><br>
-log目录下的flink-*-taskexecutor-*.out日志就会打印出统计的单词个数：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564315564138.bmp" alt=""></p>
-<h2 id="进程查看">进程查看</h2>
-<p>flink常用的进程有两个，一个jobManager，一个taskManager，这里通过WordCount.jar来演示：</p>
-<pre><code>[fei@fei bin]$ ./flink run ../examples/streaming/WordCount.jar --input  test.txt
-Starting execution of program
-Printing result to stdout. Use --output to specify output path.
-Program execution finished
-Job with JobID a0b57877a6564ba0efe8826dca2aff02 has finished.
-Job Runtime: 951 ms
-</code></pre>
-<p>其中--input用来指定输入的文件，这个文件如果开始有空行，会报错：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564839749115.bmp" alt=""><br>
-执行完后我们通过jps命令可以查看所有进程：</p>
-<pre><code>[fei@fei bin]$ jps
-5377 StandaloneSessionClusterEntrypoint
-5827 TaskManagerRunner
-29316 Jps
-</code></pre>
-<p>其中TaskManagerRunner就是taskManager，StandaloneSessionClusterEntrypoint就是jobManager，我们可以通过ps指令查看taskManager的一些参数：</p>
-<pre><code>[fei@fei bin]$ ps -aux | grep 5827
-Warning: bad syntax, perhaps a bogus '-'? See /usr/share/doc/procps-3.2.8/FAQ
-fei       5827  1.2 25.4 1445596 791080 ?      Sl   Jul29  89:18 /usr/java/jdk1.8.0_161/bin/java -XX:+UseG1GC -Xms922M -Xmx922M -XX:MaxDirectMemorySize=1024M -Dlog.file=/home/fei/tools/flink-1.7.2/log/flink-fei-taskexecutor-1-fei.log -Dlog4j.configuration=file:/home/fei/tools/flink-1.7.2/conf/log4j.properties -Dlogback.configurationFile=file:/home/fei/tools/flink-1.7.2/conf/logback.xml -classpath /home/fei/tools/flink-1.7.2/lib/flink-python_2.11-1.7.2.jar:/home/fei/tools/flink-1.7.2/lib/log4j-1.2.17.jar:/home/fei/tools/flink-1.7.2/lib/slf4j-log4j12-1.7.15.jar:/home/fei/tools/flink-1.7.2/lib/flink-dist_2.11-1.7.2.jar::: org.apache.flink.runtime.taskexecutor.TaskManagerRunner --configDir /home/fei/tools/flink-1.7.2/conf
-fei      29569  0.0  0.0   4428   788 pts/1    S+   21:34   0:00 grep 5827
 </code></pre>
 ]]></content>
     </entry>
