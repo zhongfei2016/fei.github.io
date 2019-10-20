@@ -3,13 +3,13 @@
   <head>
     <meta charset="utf-8" >
 
-<title>Kafka单元测试方法 | NOTES</title>
+<title>[转载] Kafka单元测试方法 | NOTES</title>
 <meta name="description" content="Life is struggle.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1571474466942">
+<link rel="shortcut icon" href="https://zhongfei2016.github.io//favicon.ico?v=1571581169353">
 <link rel="stylesheet" href="https://zhongfei2016.github.io//styles/main.css">
 
 
@@ -29,7 +29,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://zhongfei2016.github.io/">
-        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1571474466942" class="site-logo">
+        <img src="https://zhongfei2016.github.io//images/avatar.png?v=1571581169353" class="site-logo">
         <h1 class="site-title">NOTES</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -91,18 +91,103 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">Kafka单元测试方法</h2>
+            <h2 class="post-title">[转载] Kafka单元测试方法</h2>
             <div class="post-date">2019-10-18</div>
             
             <div class="post-content">
-              <p>stackoverflow上有这样一个问题：<br>
+              <pre><code>private static final String TOPIC = &quot;topic-1&quot;;
+private static final String BROKERHOST = &quot;127.0.0.1&quot;;
+private static final String BROKERPORT = &quot;9092&quot;;
+private static final String ZKPORT = &quot;2181&quot;;
+
+private String nodeId = &quot;0&quot;;
+private String zkConnect = &quot;localhost:&quot; + ZKPORT;
+private KafkaServerStartable server;
+KafkaProducer&lt;Integer, byte[]&gt; producer;
+
+@Before
+public void setup() throws IOException {
+    //zookeeper
+    startZK();
+    //start kafka
+    startKafka();
+    // setup producer
+    setupProducer();
+}
+
+@After
+public void tearDown() throws Exception {
+    server.shutdown();
+    server.awaitShutdown();
+}
+
+private static void startZK() throws IOException {
+    final File zkTmpDir = File.createTempFile(&quot;zookeeper&quot;, &quot;test&quot;);
+    zkTmpDir.delete();
+    zkTmpDir.mkdir();
+
+    new Thread() {
+        @Override
+        public void run() {
+            ZooKeeperServerMain.main(new String[]{ZKPORT, zkTmpDir.getAbsolutePath()});
+        }
+    }.start();
+
+    try {
+        Thread.sleep(1000);
+    } catch (InterruptedException e) {
+    }
+}
+
+private void startKafka() {
+    Properties props = new Properties();
+    props.put(&quot;broker.id&quot;, nodeId);
+    props.put(&quot;port&quot;, BROKERPORT);
+    props.put(&quot;zookeeper.connect&quot;, zkConnect);
+    props.put(&quot;host.name&quot;, &quot;127.0.0.1&quot;);
+    KafkaConfig conf = new KafkaConfig(props);
+    server = new KafkaServerStartable(conf);
+    server.startup();
+}
+
+private void setupProducer() {
+    Properties producerProps = new Properties();
+    producerProps.setProperty(&quot;bootstrap.servers&quot;, BROKERHOST + &quot;:&quot; + BROKERPORT);
+    producerProps.setProperty(&quot;key.serializer&quot;, &quot;org.apache.kafka.common.serialization.IntegerSerializer&quot;);
+    producerProps.setProperty(&quot;value.serializer&quot;, &quot;org.apache.kafka.common.serialization.ByteArraySerializer&quot;);
+    producer = new KafkaProducer&lt;&gt;(producerProps);
+}
+
+@Test
+public void testKafkaProducer() throws Exception {
+    for (int i = 0; i &lt; 1000; i++) {
+        producer.send(new ProducerRecord&lt;&gt;(TOPIC, 0, 1, (&quot;There are some words here to count -&quot; + Integer.toString(i)).getBytes(Charset.forName(&quot;UTF-8&quot;))));
+        Thread.sleep(10);
+    }
+    System.out.println(&quot;End Test&quot;);
+}
+</code></pre>
+<p>stackoverflow上有这样一个问题：<br>
 How can I instantiate a Mock Kafka Topic for junit tests?<br>
 通过模拟一个kafka主题来对kafka进行单元测试，参考：<br>
-https://stackoverflow.com/questions/33748328/how-can-i-instantiate-a-mock-kafka-topic-for-junit-tests</p>
-<p>另外可以参考：<br>
+https://stackoverflow.com/questions/33748328/how-can-i-instantiate-a-mock-kafka-topic-for-junit-tests<br>
+https://ransilberman.com/2013/07/19/how-to-unit-test-kafka/<br>
+另外可以参考：<br>
 https://gist.github.com/asmaier/6465468</p>
 
             </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://zhongfei2016.github.io//tag/02XX23yms" class="tag">
+                    消息队列
+                  </a>
+                
+                  <a href="https://zhongfei2016.github.io//tag/AeIpShaT_" class="tag">
+                    大数据
+                  </a>
+                
+              </div>
             
             
               <div class="next-post">

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>linux git安装配置 | NOTES</title>
+<title>设计模式 | NOTES</title>
 <meta name="description" content="Life is struggle.">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -90,80 +90,28 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <div class="post-detail">
-            <h2 class="post-title">linux git安装配置</h2>
-            <div class="post-date">2019-07-29</div>
-            
-            <div class="post-content">
-              <h2 id="安装">安装</h2>
-<p>直接在root用户下执行：</p>
-<pre><code>[root@fei ~]# cd /home/fei/tools/
-[root@fei tools]# yum install git
-</code></pre>
-<h2 id="配置">配置</h2>
-<p>同样root用户下执行：</p>
-<pre><code>[root@fei codes]# git config --global user.name &quot;zhongfei2016&quot;
-[root@fei codes]# git config --global user.email zhongfei1217@163.com
-</code></pre>
-<p>然后生成公钥和私钥，直接一路回车即可：</p>
-<pre><code>[root@fei .ssh]# ssh-keygen -t rsa -C &quot;zhongfei1217@163.com&quot;
-Generating public/private rsa key pair.
-Enter file in which to save the key (/root/.ssh/id_rsa):
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in /root/.ssh/id_rsa.
-Your public key has been saved in /root/.ssh/id_rsa.pub.
-The key fingerprint is:
-fb:a1:f7:7c:eb:ed:e7:56:a8:40:d8:96:a6:07:e4:73 zhongfei1217@163.com
-The key's randomart image is:
-+--[ RSA 2048]----+
-|                 |
-|        .        |
-|       o o .     |
-|        = E      |
-|        SO     . |
-|        ..o   . .|
-|        .... .  .|
-|         o.o. ..o|
-|        ....ooo==|
-+-----------------+
-</code></pre>
-<p>默认生成的公钥和私钥都在/root/.ssh目录下，可以更改下权限，避免后续出现权限问题：</p>
-<pre><code>[root@fei .ssh]# ll
-total 8
--rw------- 1 root root 1675 Jul 29 23:39 id_rsa
--rw-r--r-- 1 root root  402 Jul 29 23:39 id_rsa.pub
-[root@fei .ssh]# pwd
-/root/.ssh
-[root@fei .ssh]# chmod 700 id_rsa
-</code></pre>
-<p>生成后，将id_rsa.pub文件内容（SSH key）复制到GitHub的SSH keys页面，new一个Key，Title中可以为该key设置一个别名，保存即可：<br>
-<img src="https://zhongfei2016.github.io//post-images/1564500862784.bmp" alt=""></p>
-
-            </div>
-            
-              <div class="tag-container">
-                
-                  <a href="https://zhongfei2016.github.io//tag/r-4W-DB0s" class="tag">
-                    开发基础
-                  </a>
-                
-              </div>
-            
-            
-              <div class="next-post">
-                <div class="next">下一篇</div>
-                <a href="https://zhongfei2016.github.io//post/flink-an-zhuang-ce-shi-shang-shou">
-                  <h3 class="post-title">
-                    flink安装测试上手
-                  </h3>
+          <h2 class="current-tag">标签: 设计模式</h2>
+          
+            <article class="post-item">
+              <div class="left">
+                <a href="https://zhongfei2016.github.io//post/ifelse-ti-dai-fang-shi">
+                  <h2 class="post-title">if...else替代方式</h2>
                 </a>
+                <div class="post-date">
+                  2019-09-28
+                </div>
+                <div class="post-abstract">
+                  
+                </div>
               </div>
-            
+              
+            </article>
+          
 
-            
-
-          </div>
+          <div class="pagination-container">
+  
+  
+</div>
 
         </div>
       </div>
