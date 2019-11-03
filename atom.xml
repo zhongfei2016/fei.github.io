@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://zhongfei2016.github.io/</id>
     <title>NOTES</title>
-    <updated>2019-10-27T15:01:56.823Z</updated>
+    <updated>2019-11-03T13:58:23.725Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://zhongfei2016.github.io/"/>
     <link rel="self" href="https://zhongfei2016.github.io//atom.xml"/>
@@ -16,10 +16,29 @@
         <link href="https://zhongfei2016.github.io//post/spark-an-te-ding-lie-chai-zhi-fen-zu-bing-ji-suan-mei-zu-tong-ji-zhi">
         </link>
         <updated>2019-10-27T15:00:35.000Z</updated>
-        <content type="html"><![CDATA[<pre><code>import operation.GroupTagFunction;
+        <content type="html"><![CDATA[<p>源数据如下：<br>
+id,time,speed,mile<br>
+c1,2019-10-27 22:41:15,13,5000<br>
+c1,2019-10-27 22:41:25,18,5035<br>
+c1,2019-10-27 22:41:36,25,5075<br>
+c1,2019-10-27 22:41:47,32,5115<br>
+c1,2019-10-27 22:41:55,40,5155<br>
+c1,2019-10-27 22:42:04,41,5205<br>
+c1,2019-10-27 22:42:15,37,5255<br>
+c1,2019-10-27 22:42:25,33,5325<br>
+c1,2019-10-27 22:48:15,13,6000<br>
+c1,2019-10-27 22:48:25,18,6035<br>
+c1,2019-10-27 22:48:36,25,6075<br>
+c1,2019-10-27 22:48:47,32,6115<br>
+c1,2019-10-27 22:48:55,40,6155<br>
+c1,2019-10-27 22:49:04,41,6205<br>
+c1,2019-10-27 22:49:15,37,6255<br>
+c1,2019-10-27 22:49:25,33,6325</p>
+<pre><code>import operation.GroupTagFunction;
+import operation.TimeFormatFunction;
+import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Column;
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
@@ -27,71 +46,49 @@ import org.apache.spark.sql.expressions.Window;
 import org.apache.spark.sql.expressions.WindowSpec;
 import org.apache.spark.sql.functions;
 import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Metadata;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.spark.sql.functions.avg;
-import static org.apache.spark.sql.functions.first;
-import static org.apache.spark.sql.functions.last;
-import static org.apache.spark.sql.functions.max;
-
 public class StatisticDemo {
     public static void main(String[] args) {
         // 初始化sparkSession local[*]表示CPU满载运行
+        SparkConf sparkConf = new SparkConf().setMaster(&quot;local[*]&quot;).setAppName(&quot;spark demo&quot;);
         SparkSession sparkSession
-                = SparkSession.builder().appName(&quot;spark demo&quot;).master(&quot;local[*]&quot;).getOrCreate();
-
+                = SparkSession.builder().config(sparkConf).getOrCreate();
         // 注册自定义函数，用于获取超过阈值时间差的分组tag
         SQLContext context = sparkSession.sqlContext();
         context.udf().register(&quot;groupTagFunction&quot;, new GroupTagFunction(), DataTypes.LongType);
+        context.udf().register(&quot;timeFormatFunction&quot;, new TimeFormatFunction(), DataTypes.LongType);
+
+        List&lt;StructField&gt; fields = new ArrayList&lt;&gt;() {{
+            add(new StructField(&quot;id&quot;, DataTypes.StringType, false, Metadata.empty()));
+            add(new StructField(&quot;time&quot;, DataTypes.StringType, false, Metadata.empty()));
+            add(new StructField(&quot;speed&quot;, DataTypes.IntegerType, false, Metadata.empty()));
+            add(new StructField(&quot;mile&quot;, DataTypes.IntegerType, false, Metadata.empty()));
+        }};
+        StructType structType = DataTypes.createStructType(fields);
+
+        Dataset&lt;Row&gt; dataset = sparkSession.read().schema(structType)
+                .option(&quot;header&quot;, &quot;true&quot;)
+                .csv(&quot;C:\\codes\\java\\demos\\SparkDemo\\src\\main\\resources\\src_data.csv&quot;);
+        dataset.show();
+
 
         // 定义时间窗列
-        WindowSpec windowSpec = Window.orderBy(new Column(&quot;time&quot;));
+        WindowSpec windowSpec = Window.partitionBy(new Column(&quot;id&quot;)).orderBy(new Column(&quot;time&quot;));
         // 定义上一行时间戳列
-        Column lagTimeStamp = functions.lag(new Column(&quot;time&quot;), 1, 0.0).over(windowSpec);
-        Column timeStamp = functions.to_timestamp(new Column(&quot;time&quot;));
+        Column lagTimeStamp = functions.lag(functions.callUDF(&quot;timeFormatFunction&quot;, new Column(&quot;time&quot;)), 0).over(windowSpec);
+        Column timeStamp = functions.callUDF(&quot;timeFormatFunction&quot;, new Column(&quot;time&quot;));
         Column timeDiff = timeStamp.minus(lagTimeStamp);
 
-        // 定义源数据列
-        List&lt;String&gt; textList = new ArrayList&lt;String&gt;() {{
-            add(&quot;id,time,speed,mile&quot;);
-            add(&quot;c1,2019-10-27 22:41:15,13,5000&quot;);
-            add(&quot;c1,2019-10-27 22:41:25,18,5035&quot;);
-            add(&quot;c1,2019-10-27 22:41:36,25,5075&quot;);
-            add(&quot;c1,2019-10-27 22:41:47,32,5115&quot;);
-            add(&quot;c1,2019-10-27 22:41:55,40,5155&quot;);
-            add(&quot;c1,2019-10-27 22:42:04,41,5205&quot;);
-            add(&quot;c1,2019-10-27 22:42:15,37,5255&quot;);
-            add(&quot;c1,2019-10-27 22:42:25,33,5325&quot;);
-            add(&quot;c1,2019-10-27 22:48:15,13,6000&quot;);
-            add(&quot;c1,2019-10-27 22:48:25,18,6035&quot;);
-            add(&quot;c1,2019-10-27 22:48:36,25,6075&quot;);
-            add(&quot;c1,2019-10-27 22:48:47,32,6115&quot;);
-            add(&quot;c1,2019-10-27 22:48:55,40,6155&quot;);
-            add(&quot;c1,2019-10-27 22:49:04,41,6205&quot;);
-            add(&quot;c1,2019-10-27 22:49:15,37,6255&quot;);
-            add(&quot;c1,2019-10-27 22:49:25,33,6325&quot;);
-        }};
-        // 源数据读入
-        Dataset&lt;String&gt; srcDataset = sparkSession.createDataset(textList, Encoders.STRING());
-
-        // 新增上一时间戳列，当前时间戳列和两时间戳差值列，以及根据差值得到的tag列
-        Dataset&lt;Row&gt; extDataset = srcDataset
-                .withColumn(&quot;lagTimeStamp&quot;, lagTimeStamp)
+        Dataset&lt;Row&gt; tagDataset = dataset.withColumn(&quot;lagTimeStamp&quot;, lagTimeStamp)
                 .withColumn(&quot;timeStamp&quot;, timeStamp)
-                .withColumn(&quot;timeDiff&quot;, timeDiff)
-                .withColumn(&quot;groupTag&quot;, functions.callUDF(&quot;groupTagFunction&quot;, timeDiff));
-
-        // 按tag分组并统计每组信息
-        Dataset&lt;Row&gt; destDataset = extDataset.groupBy(&quot;groupTag&quot;).
-                agg(avg(&quot;speed&quot;).alias(&quot;avgSpeed&quot;),
-                        max(&quot;speed&quot;).alias(&quot;maxSpeed&quot;),
-                        first(&quot;mile&quot;).alias(&quot;startMile&quot;),
-                        last(&quot;mile&quot;).alias(&quot;endMile&quot;),
-                        last(&quot;mile&quot;).minus(first(&quot;mile&quot;).alias(&quot;range&quot;))
-                );
-        destDataset.show();
+                .withColumn(&quot;timeDiff&quot;, timeDiff);
+        tagDataset.show();
     }
 }
 </code></pre>
